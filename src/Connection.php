@@ -61,18 +61,6 @@ class Connection extends \Illuminate\Database\Connection {
     }
 
     /**
-     * Get a RethinkDB table.
-     *
-     * @param  string   $name
-     * @return Table
-     */
-    public function getTable($name)
-    {
-        $table = r\table($name);
-        return new Table($this, $table);
-    }
-
-    /**
      * Get the elapsed time since a given starting point.
      *
      * @param  int    $start
