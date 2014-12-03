@@ -215,4 +215,20 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(1, count($user['messages']));
     }
 
+    public function testDistinct()
+    {
+        DB::table('items')->insert([
+            ['name' => 'knife', 'type' => 'sharp'],
+            ['name' => 'fork',  'type' => 'sharp'],
+            ['name' => 'spoon', 'type' => 'round'],
+            ['name' => 'spoon', 'type' => 'round']
+        ]);
+        $items = DB::table('items')->distinct('name')->get(); sort($items);
+        $this->assertEquals(3, count($items));
+        $this->assertEquals(array('fork', 'knife', 'spoon'), $items);
+        $types = DB::table('items')->distinct('type')->get(); sort($types);
+        $this->assertEquals(2, count($types));
+        $this->assertEquals(array('round', 'sharp'), $types);
+    }
+
 }

@@ -279,4 +279,19 @@ class Builder extends QueryBuilder
         return (0 == (int) $result['errors']);
     }
 
+    /**
+     * Force the query to only return distinct results.
+     *
+     * @var    string   $column
+     * @return Builder
+     */
+    public function distinct($column = null)
+    {
+        if ($column) $column = ['index' => $column];
+
+        $this->query = $this->query->distinct($column);
+
+        return $this;
+    }
+
 }
