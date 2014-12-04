@@ -225,10 +225,99 @@ class QueryBuilderTest extends TestCase
         ]);
         $items = DB::table('items')->distinct('name')->get(); sort($items);
         $this->assertEquals(3, count($items));
-        $this->assertEquals(array('fork', 'knife', 'spoon'), $items);
+        $this->assertEquals(['fork', 'knife', 'spoon'], $items);
         $types = DB::table('items')->distinct('type')->get(); sort($types);
         $this->assertEquals(2, count($types));
-        $this->assertEquals(array('round', 'sharp'), $types);
+        $this->assertEquals(['round', 'sharp'], $types);
+    }
+
+    public function testCustomId()
+    {
+        DB::table('items')->insert([
+            ['id' => 'knife', 'type' => 'sharp', 'amount' => 34],
+            ['id' => 'fork',  'type' => 'sharp', 'amount' => 20],
+            ['id' => 'spoon', 'type' => 'round', 'amount' => 3]
+        ]);
+        $item = DB::table('items')->find('knife');
+        $this->assertEquals('knife', $item['id']);
+        $item = DB::table('items')->where('id', 'fork')->first();
+        $this->assertEquals('fork', $item['id']);
+        DB::table('users')->insert([
+            ['id' => 1, 'name' => 'Jane Doe'],
+            ['id' => 2, 'name' => 'John Doe']
+        ]);
+        $item = DB::table('users')->find(1);
+        $this->assertEquals(1, $item['id']);
+    }
+
+    public function testTake()
+    {
+        DB::table('items')->insert([
+            ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
+            ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+        ]);
+        $items = DB::table('items')->orderBy('name')->take(2)->get();
+        $this->assertEquals(2, count($items));
+        $this->assertEquals('fork', $items[0]['name']);
+    }
+
+    public function testSkip()
+    {
+        DB::table('items')->insert([
+            ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
+            ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+        ]);
+        $items = DB::table('items')->orderBy('name')->skip(2)->get();
+        $this->assertEquals(2, count($items));
+        $this->assertEquals('spoon', $items[0]['name']);
+    }
+
+    public function testPluck()
+    {
+        DB::table('users')->insert([
+            ['name' => 'Jane Doe', 'age' => 20],
+            ['name' => 'John Doe', 'age' => 25]
+        ]);
+        $age = DB::table('users')->where('name', 'John Doe')->pluck('age');
+        $this->assertEquals(25, $age);
+    }
+
+    public function testList()
+    {
+        DB::table('items')->insert([
+            ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
+            ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+        ]);
+        $list = DB::table('items')->lists('name');
+        sort($list);
+        $this->assertEquals(4, count($list));
+        $this->assertEquals(['fork', 'knife', 'spoon', 'spoon'], $list);
+        $list = DB::table('items')->lists('type', 'name');
+        $this->assertEquals(3, count($list));
+        $this->assertEquals(['knife' => 'sharp', 'fork' => 'sharp', 'spoon' => 'round'], $list);
+    }
+
+    public function testAggregate()
+    {
+        DB::table('items')->insert([
+            ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
+            ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+        ]);
+        $this->assertEquals(71, DB::table('items')->sum('amount'));
+        $this->assertEquals(4, DB::table('items')->count('amount'));
+        $this->assertEquals(3, DB::table('items')->min('amount'));
+        $this->assertEquals(34, DB::table('items')->max('amount'));
+        $this->assertEquals(17.75, DB::table('items')->avg('amount'));
+        $this->assertEquals(2, DB::table('items')->where('name', 'spoon')->count('amount'));
+        $this->assertEquals(14, DB::table('items')->where('name', 'spoon')->max('amount'));
     }
 
 }

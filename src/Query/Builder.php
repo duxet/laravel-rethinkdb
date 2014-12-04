@@ -67,17 +67,6 @@ class Builder extends QueryBuilder
     }
 
     /**
-     * Retrieve the "count" result of the query.
-     *
-     * @param  string $columns
-     * @return int
-     */
-    public function count($columns = '*')
-    {
-        return (int) $this->query->count()->run()->toNative();
-    }
-
-    /**
      * Insert a new record into the database.
      *
      * @param  array $values
@@ -231,6 +220,18 @@ class Builder extends QueryBuilder
     }
 
     /**
+     * Set the "offset" value of the query.
+     *
+     * @param  int  $value
+     * @return $this
+     */
+    public function offset($value)
+    {
+        $this->query = $this->query->skip(max(0, $value));
+        return $this;
+    }
+
+    /**
      * Set the "limit" value of the query.
      *
      * @param  int $value
@@ -292,6 +293,82 @@ class Builder extends QueryBuilder
         $this->query = $this->query->distinct($column);
 
         return $this;
+    }
+
+    /**
+     * Add an "order by" clause to the query.
+     *
+     * @param  string  $column
+     * @param  string  $direction
+     * @return $this
+     */
+    public function orderBy($column, $direction = 'asc')
+    {
+        $direction = strtolower($direction) == 'asc'
+            ? r\asc($column) : r\desc($column);
+        $this->query = $this->query->orderBy([$direction]);
+        return $this;
+    }
+
+    /**
+     * Retrieve the "count" result of the query.
+     *
+     * @param  string  $columns
+     * @return int
+     */
+    public function count($columns = null)
+    {
+        $result = $this->query->count()->run()->toNative();
+        return (int) $result;
+    }
+
+    /**
+     * Retrieve the sum of the values of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function sum($column)
+    {
+        $result = $this->query->sum($column)->run()->toNative();
+        return $result;
+    }
+
+    /**
+     * Retrieve the minimum value of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function min($column)
+    {
+        $result = $this->query->min($column)
+            ->getField($column)->run()->toNative();
+        return $result;
+    }
+    /**
+     * Retrieve the maximum value of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function max($column)
+    {
+        $result = $this->query->max($column)
+            ->getField($column)->run()->toNative();
+        return $result;
+    }
+
+    /**
+     * Retrieve the average of the values of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function avg($column)
+    {
+        $result = $this->query->avg($column)->run()->toNative();
+        return $result;
     }
 
 }
