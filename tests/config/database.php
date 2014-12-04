@@ -5,7 +5,7 @@ return [
         'rethinkdb' => [
             'name'	   => 'rethinkdb',
             'driver'   => 'rethinkdb',
-            'host'     => '192.168.59.103',
+            'host'     => 'localhost',
             'database' => 'unittest',
         ],
     ]

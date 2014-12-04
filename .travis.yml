@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 5.5
+  - 5.6
+
+before_install:
+  - sudo add-apt-repository ppa:rethinkdb/ppa -y
+  - sudo apt-get update -qq
+  - sudo apt-get install rethinkdb -y
+
+before_script:
+  - sudo rethinkdb --daemon
+  - composer self-update
+  - composer install --dev --no-interaction
+  - mkdir -p build/logs
+
+script:
+  - phpunit --coverage-clover build/logs/clover.xml
