@@ -320,4 +320,38 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(14, DB::table('items')->where('name', 'spoon')->max('amount'));
     }
 
+    /*
+    public function testSubdocumentAggregate()
+    {
+        DB::table('items')->insert([
+            ['name' => 'knife', 'amount' => ['hidden' => 10, 'found' => 3]],
+            ['name' => 'fork',  'amount' => ['hidden' => 35, 'found' => 12]],
+            ['name' => 'spoon', 'amount' => ['hidden' => 14, 'found' => 21]],
+            ['name' => 'spoon', 'amount' => ['hidden' => 6, 'found' => 4]]
+        ]);
+        $this->assertEquals(65, DB::table('items')->sum('amount.hidden'));
+        $this->assertEquals(4, DB::table('items')->count('amount.hidden'));
+        $this->assertEquals(6, DB::table('items')->min('amount.hidden'));
+        $this->assertEquals(35, DB::table('items')->max('amount.hidden'));
+        $this->assertEquals(16.25, DB::table('items')->avg('amount.hidden'));
+    }
+    */
+
+    public function testUnset()
+    {
+        $id1 = DB::table('users')->insertGetId(['name' => 'John Doe', 'note1' => 'ABC', 'note2' => 'DEF']);
+        $id2 = DB::table('users')->insertGetId(['name' => 'Jane Doe', 'note1' => 'ABC', 'note2' => 'DEF']);
+        DB::table('users')->where('name', 'John Doe')->unset('note1');
+        $user1 = DB::table('users')->find($id1);
+        $user2 = DB::table('users')->find($id2);
+        $this->assertFalse(isset($user1['note1']));
+        $this->assertTrue(isset($user1['note2']));
+        $this->assertTrue(isset($user2['note1']));
+        $this->assertTrue(isset($user2['note2']));
+        DB::table('users')->where('name', 'Jane Doe')->unset(array('note1', 'note2'));
+        $user2 = DB::table('users')->find($id2);
+        $this->assertFalse(isset($user2['note1']));
+        $this->assertFalse(isset($user2['note2']));
+    }
+
 }

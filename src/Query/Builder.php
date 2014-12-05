@@ -215,7 +215,6 @@ class Builder extends QueryBuilder
     public function truncate()
     {
         $result = $this->query->delete()->run()->toNative();
-
         return (0 == (int) $result['errors']);
     }
 
@@ -369,6 +368,39 @@ class Builder extends QueryBuilder
     {
         $result = $this->query->avg($column)->run()->toNative();
         return $result;
+    }
+
+    /**
+     * Remove one or more fields.
+     *
+     * @param  mixed $columns
+     * @return int
+     */
+    public function drop($columns)
+    {
+        if ( ! is_array($columns)) $columns = array($columns);
+
+        $result = $this->query->replace(function($doc) use ($columns) {
+            return $doc->without($columns);
+        })->run()->toNative();
+
+        return (0 == (int) $result['errors']);
+    }
+
+    /**
+     * Handle dynamic method calls into the method.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        if ($method == 'unset')
+        {
+            return call_user_func_array(array($this, 'drop'), $parameters);
+        }
+        return parent::__call($method, $parameters);
     }
 
 }
