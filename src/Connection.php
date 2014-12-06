@@ -33,9 +33,6 @@ class Connection extends \Illuminate\Database\Connection {
         // Create the connection
         $this->connection = r\connect($config['host'],
             $port, $this->database);
-
-        // Select database
-        // $this->db = r\db($config['database'])->run($this->connection);
     }
 
     /**
@@ -69,6 +66,16 @@ class Connection extends \Illuminate\Database\Connection {
     public function getElapsedTime($start)
     {
         return parent::getElapsedTime($start);
+    }
+
+    /**
+     * Get a schema builder instance for the connection.
+     *
+     * @return Schema\Builder
+     */
+    public function getSchemaBuilder()
+    {
+        return new Schema\Builder($this);
     }
 
 }
