@@ -37,7 +37,9 @@ class TestCase extends Orchestra\Testbench\TestCase {
         $app['config']->set('cache.driver', 'array');
 
         // FIXME: There should be better way of doing this.
-        if (!Schema::hasTable('items')) Schema::create('items');
+        if (!Schema::hasTable('items')) Schema::create('items', function($table) {
+            $table->index('name')->index('type');
+        });
         if (!Schema::hasTable('users')) Schema::create('users');
     }
 

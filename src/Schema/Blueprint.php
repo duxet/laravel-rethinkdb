@@ -51,4 +51,20 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint {
         $db->tableDrop($this->table)->run($conn)->toNative();
     }
 
+    /**
+     * Specify an index for the collection.
+     *
+     * @param  string  $column
+     * @param  mixed   $options
+     * @return Blueprint
+     */
+    public function index($column, $options = null)
+    {
+        $conn = $this->connection->getConnection();
+        $db = r\db($this->connection->getDatabaseName());
+        $db->table($this->table)->indexCreate($column)
+            ->run($conn)->toNative();
+        return $this;
+    }
+
 }
