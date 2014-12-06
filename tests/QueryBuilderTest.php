@@ -354,4 +354,69 @@ class QueryBuilderTest extends TestCase
         $this->assertFalse(isset($user2['note2']));
     }
 
+    public function testOperators()
+    {
+        DB::table('users')->insert(array(
+            array('name' => 'John Doe', 'age' => 30),
+            array('name' => 'Jane Doe'),
+            array('name' => 'Robert Roe', 'age' => 'thirty-one'),
+        ));
+        $results = DB::table('users')->where('age', 'exists', true)->get();
+        $this->assertEquals(2, count($results));
+        $resultsNames = [$results[0]['name'], $results[1]['name']];
+        $this->assertContains('John Doe', $resultsNames);
+        $this->assertContains('Robert Roe', $resultsNames);
+        $results = DB::table('users')->where('age', 'exists', false)->get();
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('Jane Doe', $results[0]['name']);
+        $results = DB::table('users')->where('age', 'type', 'string')->get();
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('Robert Roe', $results[0]['name']);
+        $results = DB::table('users')->where('age', 'type', 'number')->get();
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('John Doe', $results[0]['name']);
+        $results = DB::table('users')->where('age', 'mod', [15, 0])->get();
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('John Doe', $results[0]['name']);
+        $results = DB::table('users')->where('age', 'mod', [29, 1])->get();
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('John Doe', $results[0]['name']);
+        $results = DB::table('users')->where('age', 'mod', [14, 0])->get();
+        $this->assertEquals(0, count($results));
+        DB::table('items')->insert([
+            ['name' => 'fork',  'tags' => ['sharp', 'pointy']],
+            ['name' => 'spork', 'tags' => ['sharp', 'pointy', 'round', 'bowl']],
+            ['name' => 'spoon', 'tags' => ['round', 'bowl']],
+        ]);
+        $results = DB::table('items')->where('tags', 'size', 2)->get();
+        $this->assertEquals(2, count($results));
+        $results = DB::table('items')->where('tags', 'size', 3)->get();
+        $this->assertEquals(0, count($results));
+        $results = DB::table('items')->where('tags', 'size', 4)->get();
+        $this->assertEquals(1, count($results));
+        $results = DB::table('users')->where('name', 'regexp', '(?i).*doe')->get();
+        $this->assertEquals(2, count($results));
+        $results = DB::table('users')->where('name', 'not regexp', '(?i).*doe')->get();
+        $this->assertEquals(1, count($results));
+        DB::table('users')->insert([
+            [
+                'name' => 'John Doe',
+                'addresses' => [
+                    ['city' => 'Ghent'],
+                    ['city' => 'Paris']
+                ]
+            ],
+            [
+                'name' => 'Jane Doe',
+                'addresses' => [
+                    ['city' => 'Brussels'],
+                    ['city' => 'Paris']
+                ]
+            ]
+        ]);
+        $users = DB::table('users')->where('addresses', 'contains', ['city' => 'Brussels'])->get();
+        $this->assertEquals(1, count($users));
+        $this->assertEquals('Jane Doe', $users[0]['name']);
+    }
+
 }

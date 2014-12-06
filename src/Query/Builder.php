@@ -25,7 +25,8 @@ class Builder extends QueryBuilder
         'like', 'not like', 'between', 'ilike',
         '&', '|', '^', '<<', '>>',
         'rlike', 'regexp', 'not regexp',
-        '~', '~*', '!~', '!~*', 'contains'
+        '~', '~*', '!~', '!~*',
+        'contains', 'exists', 'type', 'mod', 'size'
     );
 
     /**
@@ -194,9 +195,75 @@ class Builder extends QueryBuilder
 
         switch ($operator)
         {
+            case '>':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    return $x($column)->gt($value);
+                });
+                break;
+            case '>=':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    return $x($column)->ge($value);
+                });
+                break;
+            case '<':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    return $x($column)->lt($value);
+                });
+                break;
+            case '<=':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    return $x($column)->le($value);
+                });
+                break;
+            case '<>':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    return $x($column)->ne($value);
+                });
+                break;
+            case '!=':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    return $x($column)->ne($value);
+                });
+                break;
             case 'contains':
                 $this->query = $this->query->filter(function($x) use ($column, $value) {
                     return $x($column)->contains($value);
+                });
+                break;
+            case 'exists':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    $x = $x->hasFields($column);
+                    if (!$value) $x = $x->not();
+                    return $x;
+                });
+                break;
+            case 'type':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    return $x($column)->typeOf()->eq(strtoupper($value));
+                });
+                break;
+            case 'mod':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    $mod = $x($column)->mod((int) $value[0])->eq((int) $value[1]);
+                    return $x($column)->typeOf()->eq('NUMBER')->rAnd($mod);
+                });
+                break;
+            case 'size':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    $size = $x($column)->count()->eq((int) $value);
+                    return $x($column)->typeOf()->eq('ARRAY')->rAnd($size);
+                });
+                break;
+            case 'regexp':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    $match = $x($column)->match($value);
+                    return $x($column)->typeOf()->eq('STRING')->rAnd($match);
+                });
+                break;
+            case 'not regexp':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    $match = $x($column)->match($value)->not();
+                    return $x($column)->typeOf()->eq('STRING')->rAnd($match);
                 });
                 break;
             default:
