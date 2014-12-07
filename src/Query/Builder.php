@@ -62,6 +62,11 @@ class Builder extends QueryBuilder
      */
     public function getFresh($columns = array())
     {
+        if ( ! empty($columns) && $columns[0] != '*')
+        {
+            $this->query = $this->query->pluck($columns);
+        }
+
         $results = $this->query->run()->toNative();
 
         return $results;
@@ -193,6 +198,8 @@ class Builder extends QueryBuilder
             return $this->whereSub($column, $operator, $value, $boolean);
         }
 
+        $operator = strtolower($operator);
+
         switch ($operator)
         {
             case '>':
@@ -263,6 +270,18 @@ class Builder extends QueryBuilder
             case 'not regexp':
                 $this->query = $this->query->filter(function($x) use ($column, $value) {
                     $match = $x($column)->match($value)->not();
+                    return $x($column)->typeOf()->eq('STRING')->rAnd($match);
+                });
+                break;
+            case 'like':
+                $this->query = $this->query->filter(function($x) use ($column, $value) {
+                    $regex = str_replace('%', '', $value);
+
+                    // Convert like to regular expression.
+                    if ( ! starts_with($value, '%')) $regex = '^' . $regex;
+                    if ( ! ends_with($value, '%'))   $regex = $regex . '$';
+
+                    $match = $x($column)->match('(?i)'. $regex);
                     return $x($column)->typeOf()->eq('STRING')->rAnd($match);
                 });
                 break;
@@ -373,6 +392,19 @@ class Builder extends QueryBuilder
         $direction = strtolower($direction) == 'asc'
             ? r\asc($column) : r\desc($column);
         $this->query = $this->query->orderBy([$direction]);
+        return $this;
+    }
+
+    /**
+     * Set the columns to be selected.
+     *
+     * @param  array  $columns
+     * @return $this
+     */
+    public function select($columns = array('*'))
+    {
+        $columns = is_array($columns) ? $columns : func_get_args();
+        $this->query = $this->query->pluck($columns);
         return $this;
     }
 
