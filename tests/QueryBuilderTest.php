@@ -100,7 +100,6 @@ class QueryBuilderTest extends TestCase
             ['name' => 'John Doe', 'age' => 21]
         ]);
         DB::table('users')->where('name', 'John Doe')->update(['age' => 100]);
-        $users = DB::table('users')->get();
         $john = DB::table('users')->where('name', 'John Doe')->first();
         $jane = DB::table('users')->where('name', 'Jane Doe')->first();
         $this->assertEquals(100, $john['age']);

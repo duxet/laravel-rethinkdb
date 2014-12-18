@@ -91,4 +91,12 @@ class QueryTest extends TestCase {
         $this->assertEquals(null, $user->age);
     }
 
+    public function testOrWhere()
+    {
+        $users = User::where('age', 13)->orWhere('title', 'admin')->get();
+        $this->assertEquals(4, count($users));
+        $users = User::where('age', 13)->orWhere('age', 23)->get();
+        $this->assertEquals(2, count($users));
+    }
+
 }

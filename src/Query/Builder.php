@@ -16,6 +16,13 @@ class Builder extends QueryBuilder
     protected $query;
 
     /**
+     * The r\Table instance.
+     *
+     * @var r\Table
+     */
+    protected $table;
+
+    /**
      * All of the available clause operators.
      *
      * @var array
@@ -49,6 +56,7 @@ class Builder extends QueryBuilder
     public function from($table)
     {
         if ($table) {
+            $this->table = r\table($table);
             $this->query->table($table);
         }
         return parent::from($table);
@@ -64,9 +72,10 @@ class Builder extends QueryBuilder
     {
         if ( ! empty($columns) && $columns[0] != '*')
         {
-            $this->query = $this->query->pluck($columns);
+            $this->query->pluck($columns);
         }
 
+        $this->compileWheres();
         $results = $this->query->run()->toNative();
 
         return $results;
@@ -80,6 +89,7 @@ class Builder extends QueryBuilder
      */
     public function insert(array $values)
     {
+        $this->compileWheres();
         $result = $this->query->insert($values)->run()->toNative();
         return (0 == (int) $result['errors']);
     }
@@ -93,6 +103,7 @@ class Builder extends QueryBuilder
      */
     public function insertGetId(array $values, $sequence = null)
     {
+        $this->compileWheres();
         $result = $this->query->insert($values)->run()->toNative();
 
         if (0 == (int) $result['errors']) {
@@ -122,6 +133,7 @@ class Builder extends QueryBuilder
      */
     protected function performUpdate($query, array $options = array())
     {
+        $this->compileWheres();
         $result = $this->query->update($query)->run()->toNative();
 
         if (0 == (int)$result['errors']) {
@@ -145,152 +157,107 @@ class Builder extends QueryBuilder
         if (!is_null($id)) {
             $this->where('id', '=', $id);
         }
+        $this->compileWheres();
         return $this->query->delete()->run()->toNative();
     }
 
     /**
-     * Add a basic where clause to the query.
+     * Compile the where array to filter chain.
      *
-     * @param  string $column
-     * @param  string $operator
-     * @param  mixed $value
-     * @param  string $boolean
-     * @return $this
-     *
-     * @throws \InvalidArgumentException
+     * @return array
      */
-    public function where($column, $operator = null, $value = null, $boolean = 'and')
+    protected function compileWheres()
     {
-        // If the column is an array, we will assume it is an array of key-value pairs
-        // and can add them each as a where clause. We will maintain the boolean we
-        // received when the method was called and pass it into the nested where.
-        if (is_array($column)) {
-            return $this->whereNested(function ($query) use ($column) {
-                foreach ($column as $key => $value) {
-                    $query->where($key, '=', $value);
-                }
-            }, $boolean);
-        }
-        // Here we will make some assumptions about the operator. If only 2 values are
-        // passed to the method, we will assume that the operator is an equals sign
-        // and keep going. Otherwise, we'll require the operator to be passed in.
-        if (func_num_args() == 2) {
-            list($value, $operator) = array($operator, '=');
-        } elseif ($this->invalidOperatorAndValue($operator, $value)) {
-            throw new \InvalidArgumentException("Value must be provided.");
-        }
-        // If the columns is actually a Closure instance, we will assume the developer
-        // wants to begin a nested where statement which is wrapped in parenthesis.
-        // We'll add that Closure to the query then return back out immediately.
-        if ($column instanceof Closure) {
-            return $this->whereNested($column, $boolean);
-        }
-        // If the given operator is not found in the list of valid operators we will
-        // assume that the developer is just short-cutting the '=' operators and
-        // we will set the operators to '=' and set the values appropriately.
-        if (!in_array(strtolower($operator), $this->operators, true)) {
-            list($value, $operator) = array($operator, '=');
-        }
-        // If the value is a Closure, it means the developer is performing an entire
-        // sub-select within the query and we will need to compile the sub-select
-        // within the where clause to get the appropriate query record results.
-        if ($value instanceof Closure) {
-            return $this->whereSub($column, $operator, $value, $boolean);
+        // The wheres to compile.
+        $wheres = $this->wheres;
+
+        // If there is nothing to do, then return
+        if (!$wheres) return;
+
+        foreach ($wheres as $i => &$where)
+        {
+            // The next item in a "chain" of wheres devices the boolean of the
+            // first item. So if we see that there are multiple wheres, we will
+            // use the operator of the next where.
+            if ($i == 0 and count($wheres) > 1 and $where['boolean'] == 'and')
+            {
+                $where['boolean'] = $wheres[$i+1]['boolean'];
+            }
+
+            $filter = $this->buildFilter($where);
+
+            // Wrap the where with an $or operator.
+            if ($where['boolean'] == 'or')
+            {
+                //$result = array('$or' => array($result));
+            }
+
+            // If there are multiple wheres, we will wrap it with $and. This is needed
+            // to make nested wheres work.
+            else if (count($wheres) > 1)
+            {
+                //$result = array('$and' => array($result));
+            }
         }
 
+        $this->query->filter($filter);
+    }
+
+    private function buildFilter($where)
+    {
+        $operator = isset($where['operator']) ? $where['operator'] : '=';
         $operator = strtolower($operator);
+
+        // != is same as <>, so just use <>
+        if ($operator == '!=') $operator = '<>';
+
+        $column = $where['column'];
+        $value = isset($where['value']) ? $where['value'] : null;
+
+        $field = r\row($column);
+        $table = $this->table;
 
         switch ($operator)
         {
             case '>':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->gt($value);
-                });
-                break;
+                return $field->gt($value);
             case '>=':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->ge($value);
-                });
-                break;
+                return $field->ge($value);
             case '<':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->lt($value);
-                });
-                break;
+                return $field->lt($value);
             case '<=':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->le($value);
-                });
-                break;
+                return $field->le($value);
             case '<>':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->ne($value);
-                });
-                break;
-            case '!=':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->ne($value);
-                });
-                break;
+                return $field->ne($value);
             case 'contains':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->contains($value);
-                });
-                break;
+                return $field->contains($value);
             case 'exists':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    $x = $x->hasFields($column);
-                    if (!$value) $x = $x->not();
-                    return $x;
-                });
-                break;
+                $has = $table->hasFields($column);
+                return ($value) ? $has : $has->not();
             case 'type':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    return $x($column)->typeOf()->eq(strtoupper($value));
-                });
-                break;
+                return $field->typeOf()->eq(strtoupper($value));
             case 'mod':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    $mod = $x($column)->mod((int) $value[0])->eq((int) $value[1]);
-                    return $x($column)->typeOf()->eq('NUMBER')->rAnd($mod);
-                });
-                break;
+                $mod = $field->mod((int) $value[0])->eq((int) $value[1]);
+                return $field->typeOf()->eq('NUMBER')->rAnd($mod);
             case 'size':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    $size = $x($column)->count()->eq((int) $value);
-                    return $x($column)->typeOf()->eq('ARRAY')->rAnd($size);
-                });
-                break;
+                $size = $field->count()->eq((int) $value);
+                return $field->typeOf()->eq('ARRAY')->rAnd($size);
             case 'regexp':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    $match = $x($column)->match($value);
-                    return $x($column)->typeOf()->eq('STRING')->rAnd($match);
-                });
-                break;
+                $match = $field->match($value);
+                return $field->typeOf()->eq('STRING')->rAnd($match);
             case 'not regexp':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    $match = $x($column)->match($value)->not();
-                    return $x($column)->typeOf()->eq('STRING')->rAnd($match);
-                });
-                break;
+                $match = $field->match($value)->not();
+                return $field->typeOf()->eq('STRING')->rAnd($match);
             case 'like':
-                $this->query = $this->query->filter(function($x) use ($column, $value) {
-                    $regex = str_replace('%', '', $value);
-
-                    // Convert like to regular expression.
-                    if ( ! starts_with($value, '%')) $regex = '^' . $regex;
-                    if ( ! ends_with($value, '%'))   $regex = $regex . '$';
-
-                    $match = $x($column)->match('(?i)'. $regex);
-                    return $x($column)->typeOf()->eq('STRING')->rAnd($match);
-                });
-                break;
+                $regex = str_replace('%', '', $value);
+                // Convert like to regular expression.
+                if ( ! starts_with($value, '%')) $regex = '^' . $regex;
+                if ( ! ends_with($value, '%'))   $regex = $regex . '$';
+                $match = $field->match('(?i)'. $regex);
+                return $field->typeOf()->eq('STRING')->rAnd($match);
             default:
-                $this->query = $this->query->filter([$column => $value]);
+                return $field->eq($value);
         }
-
-
-        return $this;
     }
 
     /**
@@ -312,7 +279,7 @@ class Builder extends QueryBuilder
      */
     public function offset($value)
     {
-        $this->query = $this->query->skip(max(0, $value));
+        $this->query->skip(max(0, $value));
         return $this;
     }
 
@@ -325,7 +292,7 @@ class Builder extends QueryBuilder
     public function limit($value)
     {
         if ($value > 0) {
-            $this->query = $this->query->limit($value);
+            $this->query->limit($value);
         }
         return $this;
     }
@@ -342,6 +309,7 @@ class Builder extends QueryBuilder
     {
         $operation = $unique ? 'merge' : 'append';
 
+        $this->compileWheres();
         $result = $this->query->update([
             $column => r\row($column)->{$operation}($value)
         ])->run()->toNative();
@@ -358,6 +326,7 @@ class Builder extends QueryBuilder
      */
     public function pull($column, $value = null)
     {
+        $this->compileWheres();
         $result = $this->query->update([
             $column => r\row($column)->difference([$value])
         ])->run()->toNative();
@@ -391,7 +360,7 @@ class Builder extends QueryBuilder
     {
         $direction = strtolower($direction) == 'asc'
             ? r\asc($column) : r\desc($column);
-        $this->query = $this->query->orderBy([$direction]);
+        $this->query->orderBy([$direction]);
         return $this;
     }
 
@@ -404,7 +373,7 @@ class Builder extends QueryBuilder
     public function select($columns = array('*'))
     {
         $columns = is_array($columns) ? $columns : func_get_args();
-        $this->query = $this->query->pluck($columns);
+        $this->query->pluck($columns);
         return $this;
     }
 
@@ -416,6 +385,7 @@ class Builder extends QueryBuilder
      */
     public function count($columns = null)
     {
+        $this->compileWheres();
         $result = $this->query->count()->run()->toNative();
         return (int) $result;
     }
@@ -428,6 +398,7 @@ class Builder extends QueryBuilder
      */
     public function sum($column)
     {
+        $this->compileWheres();
         $result = $this->query->sum($column)->run()->toNative();
         return $result;
     }
@@ -440,6 +411,7 @@ class Builder extends QueryBuilder
      */
     public function min($column)
     {
+        $this->compileWheres();
         $result = $this->query->min($column)
             ->getField($column)->run()->toNative();
         return $result;
@@ -452,6 +424,7 @@ class Builder extends QueryBuilder
      */
     public function max($column)
     {
+        $this->compileWheres();
         $result = $this->query->max($column)
             ->getField($column)->run()->toNative();
         return $result;
@@ -465,6 +438,7 @@ class Builder extends QueryBuilder
      */
     public function avg($column)
     {
+        $this->compileWheres();
         $result = $this->query->avg($column)->run()->toNative();
         return $result;
     }
@@ -479,6 +453,7 @@ class Builder extends QueryBuilder
     {
         if ( ! is_array($columns)) $columns = array($columns);
 
+        $this->compileWheres();
         $result = $this->query->replace(function($doc) use ($columns) {
             return $doc->without($columns);
         })->run()->toNative();
