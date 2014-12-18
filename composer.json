@@ -19,7 +19,9 @@
         "danielmewes/php-rql": "dev-master"
     },
     "require-dev": {
-        "orchestra/testbench": "3.0.*"
+        "psr/log": "1.0.0",
+        "orchestra/testbench": "3.0.*",
+        "codeclimate/php-test-reporter": "0.1.*@dev"
     },
     "minimum-stability": "dev"
 }
