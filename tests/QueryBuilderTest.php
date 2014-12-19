@@ -355,11 +355,11 @@ class QueryBuilderTest extends TestCase
 
     public function testOperators()
     {
-        DB::table('users')->insert(array(
-            array('name' => 'John Doe', 'age' => 30),
-            array('name' => 'Jane Doe'),
-            array('name' => 'Robert Roe', 'age' => 'thirty-one'),
-        ));
+        DB::table('users')->insert([
+            ['name' => 'John Doe', 'age' => 30],
+            ['name' => 'Jane Doe'],
+            ['name' => 'Robert Roe', 'age' => 'thirty-one'],
+        ]);
         $results = DB::table('users')->where('age', 'exists', true)->get();
         $this->assertEquals(2, count($results));
         $resultsNames = [$results[0]['name'], $results[1]['name']];

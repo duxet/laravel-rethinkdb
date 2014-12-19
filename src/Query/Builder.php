@@ -70,12 +70,17 @@ class Builder extends QueryBuilder
      */
     public function getFresh($columns = array())
     {
+        $this->compileWheres();
+
+        if ($this->offset)    $this->query->skip($this->offset);
+        if ($this->limit)     $this->query->limit($this->limit);
+        if ($this->columns)   $columns = $this->columns;
+
         if ( ! empty($columns) && $columns[0] != '*')
         {
             $this->query->pluck($columns);
         }
 
-        $this->compileWheres();
         $results = $this->query->run()->toNative();
 
         return $results;
@@ -174,33 +179,27 @@ class Builder extends QueryBuilder
         // If there is nothing to do, then return
         if (!$wheres) return;
 
+        $filters = null;
+
         foreach ($wheres as $i => &$where)
         {
-            // The next item in a "chain" of wheres devices the boolean of the
-            // first item. So if we see that there are multiple wheres, we will
-            // use the operator of the next where.
-            if ($i == 0 and count($wheres) > 1 and $where['boolean'] == 'and')
-            {
-                $where['boolean'] = $wheres[$i+1]['boolean'];
-            }
-
             $filter = $this->buildFilter($where);
+
+            if (!$filters) $filters = $filter;
 
             // Wrap the where with an $or operator.
             if ($where['boolean'] == 'or')
             {
-                //$result = array('$or' => array($result));
+                $filters = $filters->rOr($filter);
             }
-
-            // If there are multiple wheres, we will wrap it with $and. This is needed
-            // to make nested wheres work.
-            else if (count($wheres) > 1)
+            // If there is more wheres, then wrap existing filters with and
+            else if ($filters && count($wheres) > 1)
             {
-                //$result = array('$and' => array($result));
+                $filters = $filters->rAnd($filter);
             }
         }
 
-        $this->query->filter($filter);
+        $this->query->filter($filters, null);
     }
 
     private function buildFilter($where)
@@ -213,9 +212,7 @@ class Builder extends QueryBuilder
 
         $column = $where['column'];
         $value = isset($where['value']) ? $where['value'] : null;
-
         $field = r\row($column);
-        $table = $this->table;
 
         switch ($operator)
         {
@@ -232,8 +229,8 @@ class Builder extends QueryBuilder
             case 'contains':
                 return $field->contains($value);
             case 'exists':
-                $has = $table->hasFields($column);
-                return ($value) ? $has : $has->not();
+                $field = $field->rDefault(null);
+                return ($value) ? $field : $field->not();
             case 'type':
                 return $field->typeOf()->eq(strtoupper($value));
             case 'mod':
@@ -269,32 +266,6 @@ class Builder extends QueryBuilder
     {
         $result = $this->query->delete()->run()->toNative();
         return (0 == (int) $result['errors']);
-    }
-
-    /**
-     * Set the "offset" value of the query.
-     *
-     * @param  int  $value
-     * @return $this
-     */
-    public function offset($value)
-    {
-        $this->query->skip(max(0, $value));
-        return $this;
-    }
-
-    /**
-     * Set the "limit" value of the query.
-     *
-     * @param  int $value
-     * @return $this
-     */
-    public function limit($value)
-    {
-        if ($value > 0) {
-            $this->query->limit($value);
-        }
-        return $this;
     }
 
     /**
@@ -361,19 +332,6 @@ class Builder extends QueryBuilder
         $direction = strtolower($direction) == 'asc'
             ? r\asc($column) : r\desc($column);
         $this->query->orderBy([$direction]);
-        return $this;
-    }
-
-    /**
-     * Set the columns to be selected.
-     *
-     * @param  array  $columns
-     * @return $this
-     */
-    public function select($columns = array('*'))
-    {
-        $columns = is_array($columns) ? $columns : func_get_args();
-        $this->query->pluck($columns);
         return $this;
     }
 
