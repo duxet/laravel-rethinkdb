@@ -183,7 +183,8 @@ class Builder extends QueryBuilder
 
         foreach ($wheres as $i => &$where)
         {
-            $filter = $this->buildFilter($where);
+            $method = 'build' . $where['type'] .'filter';
+            $filter = $this->{$method}($where);
 
             if (!$filters) $filters = $filter;
 
@@ -202,7 +203,7 @@ class Builder extends QueryBuilder
         $this->query->filter($filters, null);
     }
 
-    private function buildFilter($where)
+    protected function buildBasicFilter($where)
     {
         $operator = isset($where['operator']) ? $where['operator'] : '=';
         $operator = strtolower($operator);
@@ -255,6 +256,30 @@ class Builder extends QueryBuilder
             default:
                 return $field->eq($value);
         }
+    }
+
+    protected function buildBetweenFilter($where)
+    {
+        $row = r\row($where['column']);
+        $values = $where['values'];
+
+        if ($where['not'])
+        {
+            $or = $row->ge($values[1]);
+            return $row->le($values[0])->rOr($or);
+        }
+        else
+        {
+            $and = $row->le($values[1]);
+            return $row->ge($values[0])->rAnd($and);
+        }
+    }
+
+    protected function buildNullFilter($where)
+    {
+        $where['operator'] = '=';
+        $where['value'] = null;
+        return $this->buildBasicFilter($where);
     }
 
     /**
@@ -417,6 +442,22 @@ class Builder extends QueryBuilder
         })->run()->toNative();
 
         return (0 == (int) $result['errors']);
+    }
+
+    /**
+     * Add a where between statement to the query.
+     *
+     * @param  string  $column
+     * @param  array   $values
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return Builder
+     */
+    public function whereBetween($column, array $values, $boolean = 'and', $not = false)
+    {
+        $type = 'between';
+        $this->wheres[] = compact('column', 'type', 'boolean', 'values', 'not');
+        return $this;
     }
 
     /**

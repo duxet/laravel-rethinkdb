@@ -99,4 +99,12 @@ class QueryTest extends TestCase {
         $this->assertEquals(2, count($users));
     }
 
+    public function testBetween()
+    {
+        $users = User::whereBetween('age', [0, 25])->get();
+        $this->assertEquals(2, count($users));
+        $users = User::whereBetween('age', [13, 23])->get();
+        $this->assertEquals(2, count($users));
+    }
+
 }
