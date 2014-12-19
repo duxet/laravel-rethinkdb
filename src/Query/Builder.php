@@ -282,6 +282,19 @@ class Builder extends QueryBuilder
         return $this->buildBasicFilter($where);
     }
 
+    protected function buildNotNullFilter($where)
+    {
+        return $this->buildNullFilter($where)->not();
+    }
+
+    protected function buildInFilter($where)
+    {
+        $row = r\row($where['column']);
+        $values = array_values($where['values']);
+
+        return r\expr($values)->contains($row);
+    }
+
     /**
      * Run a truncate statement on the table.
      *

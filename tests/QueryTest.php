@@ -107,4 +107,16 @@ class QueryTest extends TestCase {
         $this->assertEquals(2, count($users));
     }
 
+    public function testWhereNull()
+    {
+        $users = User::whereNull('age')->get();
+        $this->assertEquals(1, count($users));
+    }
+
+    public function testWhereNotNull()
+    {
+        $users = User::whereNotNull('age')->get();
+        $this->assertEquals(8, count($users));
+    }
+
 }
