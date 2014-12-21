@@ -83,6 +83,12 @@ class Builder extends QueryBuilder
 
         $results = $this->query->run()->toNative();
 
+        if (isset($results['$reql_type$'])
+            && $results['$reql_type$'] === 'GROUPED_DATA')
+        {
+            return $results['data'];
+        }
+
         return $results;
     }
 
@@ -471,6 +477,23 @@ class Builder extends QueryBuilder
         })->run()->toNative();
 
         return (0 == (int) $result['errors']);
+    }
+
+    /**
+     * Add a "group by" clause to the query.
+     *
+     * @param  array|string  $column,...
+     * @return $this
+     */
+    public function groupBy()
+    {
+        foreach (func_get_args() as $arg)
+        {
+            $this->query->group($arg)->ungroup()->map(function($doc) {
+                return $doc('reduction')->nth(0);
+            });
+        }
+        return $this;
     }
 
     /**

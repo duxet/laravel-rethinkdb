@@ -133,4 +133,37 @@ class QueryTest extends TestCase {
         $this->assertEquals(8, count($users));
     }
 
+    public function testOrder()
+    {
+        $user = User::whereNotNull('age')->orderBy('age', 'asc')->first();
+        $this->assertEquals(13, $user->age);
+        $user = User::whereNotNull('age')->orderBy('age', 'ASC')->first();
+        $this->assertEquals(13, $user->age);
+        $user = User::whereNotNull('age')->orderBy('age', 'desc')->first();
+        $this->assertEquals(37, $user->age);
+    }
+
+    public function testGroupBy()
+    {
+        $users = User::groupBy('title')->get();
+        $this->assertEquals(3, count($users));
+        $users = User::groupBy('age')->get();
+        $this->assertEquals(6, count($users));
+        $users = User::groupBy('age')->skip(1)->get();
+        $this->assertEquals(5, count($users));
+        $users = User::groupBy('age')->take(2)->get();
+        $this->assertEquals(2, count($users));
+        $users = User::groupBy('age')->orderBy('age', 'desc')->get();
+        $this->assertEquals(37, $users[0]->age);
+        $this->assertEquals(35, $users[1]->age);
+        $this->assertEquals(33, $users[2]->age);
+        $users = User::groupBy('age')->skip(1)->take(2)->orderBy('age', 'desc')->get();
+        $this->assertEquals(2, count($users));
+        $this->assertEquals(35, $users[0]->age);
+        $this->assertEquals(33, $users[1]->age);
+        $users = User::select('name')->groupBy('age')->skip(1)->take(2)->orderBy('age', 'desc')->get();
+        $this->assertEquals(2, count($users));
+        $this->assertNotNull($users[0]->name);
+    }
+
 }
