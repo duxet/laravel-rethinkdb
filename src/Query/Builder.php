@@ -289,10 +289,26 @@ class Builder extends QueryBuilder
 
     protected function buildInFilter($where)
     {
-        $row = r\row($where['column']);
+        $column = $where['column'];
         $values = array_values($where['values']);
 
-        return r\expr($values)->contains($row);
+        $contains = function($x) use($values, $column) {
+            return r\expr($values)->contains($x($column));
+        };
+
+        return $contains;
+    }
+
+    protected function buildNotInFilter($where)
+    {
+        $column = $where['column'];
+        $values = array_values($where['values']);
+
+        $contains = function($x) use($values, $column) {
+            return r\expr($values)->contains($x($column))->not();
+        };
+
+        return $contains;
     }
 
     /**

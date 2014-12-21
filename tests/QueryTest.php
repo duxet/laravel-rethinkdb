@@ -107,6 +107,20 @@ class QueryTest extends TestCase {
         $this->assertEquals(2, count($users));
     }
 
+    public function testIn()
+    {
+        $users = User::whereIn('age', array(13, 23))->get();
+        $this->assertEquals(2, count($users));
+        $users = User::whereIn('age', array(33, 35, 13))->get();
+        $this->assertEquals(6, count($users));
+        $users = User::whereNotIn('age', array(33, 35))->get();
+        $this->assertEquals(4, count($users));
+        // FIXME: https://github.com/danielmewes/php-rql/issues/75
+        //$users = User::whereNotNull('age')
+        //    ->whereNotIn('age', array(33, 35))->get();
+        //$this->assertEquals(3, count($users));
+    }
+
     public function testWhereNull()
     {
         $users = User::whereNull('age')->get();
