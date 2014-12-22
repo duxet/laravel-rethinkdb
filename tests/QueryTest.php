@@ -166,4 +166,43 @@ class QueryTest extends TestCase {
         $this->assertNotNull($users[0]->name);
     }
 
+    public function testCount()
+    {
+        $count = User::where('age', '<>', 35)->count();
+        $this->assertEquals(6, $count);
+    }
+
+    public function testSubquery()
+    {
+        $users = User::where('title', 'admin')->orWhere(function($query)
+        {
+            $query->where('name', 'Tommy Toe')
+                ->orWhere('name', 'Error');
+        })
+            ->get();
+        $this->assertEquals(5, count($users));
+        $users = User::where('title', 'user')->where(function($query)
+        {
+            $query->where('age', 35)
+                ->orWhere('name', 'like', '%harry%');
+        })
+            ->get();
+        $this->assertEquals(2, count($users));
+        $users = User::where('age', 35)->orWhere(function($query)
+        {
+            $query->where('title', 'admin')
+                ->orWhere('name', 'Error');
+        })
+            ->get();
+        $this->assertEquals(5, count($users));
+        $users = User::where('title', 'admin')
+            ->where(function($query)
+            {
+                $query->where('age', '>', 15)
+                    ->orWhere('name', 'Harry Hoe');
+            })
+            ->get();
+        $this->assertEquals(3, $users->count());
+    }
+
 }

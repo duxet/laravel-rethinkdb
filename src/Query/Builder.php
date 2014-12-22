@@ -206,7 +206,9 @@ class Builder extends QueryBuilder
             }
         }
 
-        $this->query->filter($filters, null);
+        $this->query->filter($filters);
+
+        return $filters;
     }
 
     protected function buildBasicFilter($where)
@@ -315,6 +317,10 @@ class Builder extends QueryBuilder
         };
 
         return $contains;
+    }
+
+    protected function buildNestedFilter($where) {
+        return $where['query']->compileWheres();
     }
 
     /**
