@@ -3,6 +3,7 @@
 use r;
 use duxet\Rethinkdb\Connection;
 use duxet\Rethinkdb\Query;
+use duxet\Rethinkdb\RQL\FilterBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class Builder extends QueryBuilder
@@ -179,148 +180,22 @@ class Builder extends QueryBuilder
      */
     protected function compileWheres()
     {
-        // The wheres to compile.
+        // Wheres to compile
         $wheres = $this->wheres;
 
         // If there is nothing to do, then return
         if (!$wheres) return;
 
-        $filters = null;
-
-        foreach ($wheres as $i => &$where)
-        {
-            $method = 'build' . $where['type'] .'filter';
-            $filter = $this->{$method}($where);
-
-            if (!$filters) $filters = $filter;
-
-            // Wrap the where with an $or operator.
-            if ($where['boolean'] == 'or')
-            {
-                $filters = $filters->rOr($filter);
-            }
-            // If there is more wheres, then wrap existing filters with and
-            else if ($filters && count($wheres) > 1)
-            {
-                $filters = $filters->rAnd($filter);
-            }
-        }
-
-        $this->query->filter($filters);
-
-        return $filters;
+        $this->query->filter(function($document) use($wheres) {
+            $builder = new FilterBuilder($document);
+            return $builder->compileWheres($wheres);
+        });
     }
 
-    protected function buildBasicFilter($where)
+    public function buildFilter($document)
     {
-        $operator = isset($where['operator']) ? $where['operator'] : '=';
-        $operator = strtolower($operator);
-
-        // != is same as <>, so just use <>
-        if ($operator == '!=') $operator = '<>';
-
-        $column = $where['column'];
-        $value = isset($where['value']) ? $where['value'] : null;
-        $field = r\row($column);
-
-        switch ($operator)
-        {
-            case '>':
-                return $field->gt($value);
-            case '>=':
-                return $field->ge($value);
-            case '<':
-                return $field->lt($value);
-            case '<=':
-                return $field->le($value);
-            case '<>':
-                return $field->ne($value);
-            case 'contains':
-                return $field->contains($value);
-            case 'exists':
-                $field = $field->rDefault(null);
-                return ($value) ? $field : $field->not();
-            case 'type':
-                return $field->typeOf()->eq(strtoupper($value));
-            case 'mod':
-                $mod = $field->mod((int) $value[0])->eq((int) $value[1]);
-                return $field->typeOf()->eq('NUMBER')->rAnd($mod);
-            case 'size':
-                $size = $field->count()->eq((int) $value);
-                return $field->typeOf()->eq('ARRAY')->rAnd($size);
-            case 'regexp':
-                $match = $field->match($value);
-                return $field->typeOf()->eq('STRING')->rAnd($match);
-            case 'not regexp':
-                $match = $field->match($value)->not();
-                return $field->typeOf()->eq('STRING')->rAnd($match);
-            case 'like':
-                $regex = str_replace('%', '', $value);
-                // Convert like to regular expression.
-                if ( ! starts_with($value, '%')) $regex = '^' . $regex;
-                if ( ! ends_with($value, '%'))   $regex = $regex . '$';
-                $match = $field->match('(?i)'. $regex);
-                return $field->typeOf()->eq('STRING')->rAnd($match);
-            default:
-                return $field->eq($value);
-        }
-    }
-
-    protected function buildBetweenFilter($where)
-    {
-        $row = r\row($where['column']);
-        $values = $where['values'];
-
-        if ($where['not'])
-        {
-            $or = $row->ge($values[1]);
-            return $row->le($values[0])->rOr($or);
-        }
-        else
-        {
-            $and = $row->le($values[1]);
-            return $row->ge($values[0])->rAnd($and);
-        }
-    }
-
-    protected function buildNullFilter($where)
-    {
-        $where['operator'] = '=';
-        $where['value'] = null;
-        return $this->buildBasicFilter($where);
-    }
-
-    protected function buildNotNullFilter($where)
-    {
-        return $this->buildNullFilter($where)->not();
-    }
-
-    protected function buildInFilter($where)
-    {
-        $column = $where['column'];
-        $values = array_values($where['values']);
-
-        $contains = function($x) use($values, $column) {
-            return r\expr($values)->contains($x($column));
-        };
-
-        return $contains;
-    }
-
-    protected function buildNotInFilter($where)
-    {
-        $column = $where['column'];
-        $values = array_values($where['values']);
-
-        $contains = function($x) use($values, $column) {
-            return r\expr($values)->contains($x($column))->not();
-        };
-
-        return $contains;
-    }
-
-    protected function buildNestedFilter($where) {
-        return $where['query']->compileWheres();
+        $builder = new FilterBuilder($document);
+        return $builder->compileWheres($this->wheres);
     }
 
     /**
