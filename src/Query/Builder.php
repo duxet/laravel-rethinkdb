@@ -285,7 +285,7 @@ class Builder extends QueryBuilder
     public function count($columns = null)
     {
         $this->compileWheres();
-        $result = $this->query->count()->run()->toNative();
+        $result = $this->query->count();
         return (int) $result;
     }
 
@@ -298,7 +298,7 @@ class Builder extends QueryBuilder
     public function sum($column)
     {
         $this->compileWheres();
-        $result = $this->query->sum($column)->run()->toNative();
+        $result = $this->query->sum($column);
         return $result;
     }
 
@@ -338,7 +338,7 @@ class Builder extends QueryBuilder
     public function avg($column)
     {
         $this->compileWheres();
-        $result = $this->query->avg($column)->run()->toNative();
+        $result = $this->query->avg($column);
         return $result;
     }
 

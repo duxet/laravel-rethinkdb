@@ -25,8 +25,8 @@ class Query {
      */
     public function __construct(Connection $connection)
     {
-        $this->connection = $connection;
-        $this->query = r\Db($this->connection->getDatabaseName());
+        $this->connection = $connection->getConnection();
+        $this->query = r\Db($connection->getDatabaseName());
     }
 
     /**
@@ -38,9 +38,12 @@ class Query {
      */
     public function __call($method, $parameters)
     {
-        if ($method == 'run')
+        $autoRun = ['count', 'sum', 'avg'];
+
+        if (in_array($method, $autoRun))
         {
-            return $this->query->run($this->connection->getConnection());
+            $query = call_user_func_array([$this->query, $method], $parameters);
+            return $query->run($this->connection)->toNative();
         }
         else
         {
@@ -48,6 +51,11 @@ class Query {
         }
 
         return $this;
+    }
+
+    public function run()
+    {
+        return $this->query->run($this->connection);
     }
 
 }
