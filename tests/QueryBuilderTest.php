@@ -52,6 +52,12 @@ class QueryBuilderTest extends TestCase
     {
         $id = DB::table('users')->insertGetId(['name' => 'John Doe']);
         $this->assertInternalType('string', $id);
+
+        // Test for fixed id
+        $id = DB::table('users')->insertGetId([
+            'id' => 'john', 'name' => 'John Doe'
+        ]);
+        $this->assertInternalType('string', $id);
     }
 
     public function testBatchInsert()

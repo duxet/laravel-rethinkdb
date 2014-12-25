@@ -119,6 +119,8 @@ class Builder extends QueryBuilder
         $result = $this->query->insert($values);
 
         if (0 == (int) $result['errors']) {
+            if (isset($values['id'])) return $values['id'];
+
             // Return id
             return current($result['generated_keys']);
         }
