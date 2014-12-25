@@ -102,7 +102,7 @@ class Builder extends QueryBuilder
     public function insert(array $values)
     {
         $this->compileWheres();
-        $result = $this->query->insert($values)->run()->toNative();
+        $result = $this->query->insert($values);
         return (0 == (int) $result['errors']);
     }
 
@@ -116,7 +116,7 @@ class Builder extends QueryBuilder
     public function insertGetId(array $values, $sequence = null)
     {
         $this->compileWheres();
-        $result = $this->query->insert($values)->run()->toNative();
+        $result = $this->query->insert($values);
 
         if (0 == (int) $result['errors']) {
             // Return id

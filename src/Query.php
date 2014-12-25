@@ -38,7 +38,7 @@ class Query {
      */
     public function __call($method, $parameters)
     {
-        $autoRun = ['count', 'sum', 'avg'];
+        $autoRun = ['count', 'sum', 'avg', 'insert'];
 
         if (in_array($method, $autoRun))
         {
