@@ -313,8 +313,9 @@ class Builder extends QueryBuilder
     public function min($column)
     {
         $this->compileWheres();
-        $result = $this->query->min($column)->rDefault(null)
-            ->getField($column)->run()->toNative();
+        $result = $this->query->min($column)
+            ->getField($column)->rDefault(null)
+            ->run()->toNative();
         return $result;
     }
     /**
@@ -326,8 +327,9 @@ class Builder extends QueryBuilder
     public function max($column)
     {
         $this->compileWheres();
-        $result = $this->query->max($column)->rDefault(null)
-            ->getField($column)->run()->toNative();
+        $result = $this->query->max($column)
+            ->getField($column)->rDefault(null)
+            ->run()->toNative();
         return $result;
     }
 
@@ -340,7 +342,8 @@ class Builder extends QueryBuilder
     public function avg($column)
     {
         $this->compileWheres();
-        $result = $this->query->avg($column);
+        $result = $this->query->avg($column)
+            ->rDefault(null)->run()->toNative();
         return $result;
     }
 

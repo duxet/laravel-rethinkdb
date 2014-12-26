@@ -323,6 +323,12 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(17.75, DB::table('items')->avg('amount'));
         $this->assertEquals(2, DB::table('items')->where('name', 'spoon')->count('amount'));
         $this->assertEquals(14, DB::table('items')->where('name', 'spoon')->max('amount'));
+
+        // test for missing fields
+        $this->assertEquals(null, DB::table('items')->sum('missing_field'));
+        $this->assertEquals(null, DB::table('items')->min('missing_field'));
+        $this->assertEquals(null, DB::table('items')->max('missing_field'));
+        $this->assertEquals(null, DB::table('items')->avg('missing_field'));
     }
 
     /*
