@@ -227,14 +227,4 @@ class QueryTest extends TestCase {
         $this->assertEquals(2, count($users));
     }
 
-    public function testPaginate()
-    {
-        $results = User::paginate(2);
-        $this->assertEquals(2, $results->count());
-        $this->assertNotNull($results[0]->title);
-        $results = User::paginate(2, ['name', 'age']);
-        $this->assertEquals(2, $results->count());
-        $this->assertNull($results[0]->title);
-    }
-
 }
