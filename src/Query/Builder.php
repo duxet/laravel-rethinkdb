@@ -313,7 +313,7 @@ class Builder extends QueryBuilder
     public function min($column)
     {
         $this->compileWheres();
-        $result = $this->query->min($column)
+        $result = $this->query->min($column)->rDefault(null)
             ->getField($column)->run()->toNative();
         return $result;
     }
@@ -326,7 +326,7 @@ class Builder extends QueryBuilder
     public function max($column)
     {
         $this->compileWheres();
-        $result = $this->query->max($column)
+        $result = $this->query->max($column)->rDefault(null)
             ->getField($column)->run()->toNative();
         return $result;
     }
