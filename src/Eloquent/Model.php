@@ -16,9 +16,9 @@ class Model extends \Illuminate\Database\Eloquent\Model {
     }
 
     /**
-     * Return a timestamp as DateTime object.
+     * Return DateTime object as Carbon instance.
      *
-     * @param  mixed  $value
+     * @param  DateTime  $value
      * @return \Carbon\Carbon
      */
     protected function asDateTime($value)
