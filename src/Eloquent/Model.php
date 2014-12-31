@@ -1,5 +1,6 @@
 <?php namespace duxet\Rethinkdb\Eloquent;
 
+use Carbon\Carbon;
 use duxet\Rethinkdb\Query\Builder as QueryBuilder;
 
 class Model extends \Illuminate\Database\Eloquent\Model {
@@ -12,6 +13,17 @@ class Model extends \Illuminate\Database\Eloquent\Model {
     protected function getDateFormat()
     {
         return 'Y-m-d H:i:s';
+    }
+
+    /**
+     * Return a timestamp as DateTime object.
+     *
+     * @param  mixed  $value
+     * @return \Carbon\Carbon
+     */
+    protected function asDateTime($value)
+    {
+        return Carbon::instance($value);
     }
 
     /**
