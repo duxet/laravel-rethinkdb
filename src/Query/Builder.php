@@ -72,6 +72,7 @@ class Builder extends QueryBuilder
     public function getFresh($columns = array())
     {
         $this->compileWheres();
+        $this->compileOrders();
 
         if ($this->offset)    $this->query->skip($this->offset);
         if ($this->limit)     $this->query->limit($this->limit);
@@ -91,6 +92,24 @@ class Builder extends QueryBuilder
         }
 
         return $results;
+    }
+
+    /**
+     * Compile orders into query.
+     *
+     */
+    public function compileOrders()
+    {
+        if (!$this->orders) return;
+
+        foreach($this->orders as $order) {
+            $column = $order['column'];
+            $direction = $order['direction'];
+
+            $order = strtolower($direction) == 'asc'
+                ? r\asc($column) : r\desc($column);
+            $this->query->orderBy([$order]);
+        }
     }
 
     /**
@@ -260,21 +279,6 @@ class Builder extends QueryBuilder
 
         $this->query = $this->query->distinct($column);
 
-        return $this;
-    }
-
-    /**
-     * Add an "order by" clause to the query.
-     *
-     * @param  string  $column
-     * @param  string  $direction
-     * @return $this
-     */
-    public function orderBy($column, $direction = 'asc')
-    {
-        $direction = strtolower($direction) == 'asc'
-            ? r\asc($column) : r\desc($column);
-        $this->query->orderBy([$direction]);
         return $this;
     }
 
