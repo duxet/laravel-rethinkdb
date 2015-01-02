@@ -106,9 +106,16 @@ class Builder extends QueryBuilder
             $column = $order['column'];
             $direction = $order['direction'];
 
-            $order = strtolower($direction) == 'asc'
+            $compiled = strtolower($direction) == 'asc'
                 ? r\asc($column) : r\desc($column);
-            $this->query->orderBy([$order]);
+
+            // Use index as field if needed
+            if ($order['index'])
+            {
+                $compiled = ['index' => $compiled];
+            }
+
+            $this->query->orderBy([$compiled]);
         }
     }
 
@@ -383,6 +390,22 @@ class Builder extends QueryBuilder
                 return $doc('reduction')->nth(0);
             });
         }
+        return $this;
+    }
+
+    /**
+     * Add an "order by" clause to the query.
+     *
+     * @param  string  $column
+     * @param  string  $direction
+     * @param  bool    $index
+     * @return $this
+     */
+    public function orderBy($column, $direction = 'asc', $index = false)
+    {
+        $property = $this->unions ? 'unionOrders' : 'orders';
+        $direction = strtolower($direction) == 'asc' ? 'asc' : 'desc';
+        $this->{$property}[] = compact('column', 'direction', 'index');
         return $this;
     }
 
