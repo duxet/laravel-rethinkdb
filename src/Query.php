@@ -25,7 +25,7 @@ class Query {
      */
     public function __construct(Connection $connection)
     {
-        $this->connection = $connection->getConnection();
+        $this->connection = $connection;
         $this->query = r\Db($connection->getDatabaseName());
     }
 
@@ -40,14 +40,11 @@ class Query {
     {
         $autoRun = ['count', 'sum', 'insert'];
 
+        $this->query = call_user_func_array([$this->query, $method], $parameters);
+
         if (in_array($method, $autoRun))
         {
-            $query = call_user_func_array([$this->query, $method], $parameters);
-            return $query->run($this->connection)->toNative();
-        }
-        else
-        {
-            $this->query = call_user_func_array([$this->query, $method], $parameters);
+            return $this->run()->toNative();
         }
 
         return $this;
@@ -55,7 +52,16 @@ class Query {
 
     public function run()
     {
-        return $this->query->run($this->connection);
+        $start = microtime(true);
+
+        $connection = $this->connection->getConnection();
+        $result = $this->query->run($connection);
+
+        $query = strval($this->query);
+        $time = $this->connection->getElapsedTime($start);
+        $this->connection->logQuery($query, [], $time);
+
+        return $result;
     }
 
 }
