@@ -40,22 +40,25 @@ class Query {
     {
         $autoRun = ['count', 'sum', 'insert'];
 
-        $this->query = call_user_func_array([$this->query, $method], $parameters);
+        $query = call_user_func_array([$this->query, $method], $parameters);
 
         if (in_array($method, $autoRun))
         {
-            return $this->run()->toNative();
+            return $this->run($query)->toNative();
         }
+
+        $this->query = $query;
 
         return $this;
     }
 
-    public function run()
+    public function run($query = null)
     {
         $start = microtime(true);
+        $query = $query ?: $this->query;
 
         $connection = $this->connection->getConnection();
-        $result = $this->query->run($connection);
+        $result = $query->run($connection);
 
         $query = strval($this->query);
         $time = $this->connection->getElapsedTime($start);
