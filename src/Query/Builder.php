@@ -5,6 +5,7 @@ use duxet\Rethinkdb\Connection;
 use duxet\Rethinkdb\Query;
 use duxet\Rethinkdb\RQL\FilterBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 
 class Builder extends QueryBuilder
 {
@@ -91,7 +92,7 @@ class Builder extends QueryBuilder
             return $results['data'];
         }
 
-        return $results;
+        return new Collection($results);
     }
 
     /**

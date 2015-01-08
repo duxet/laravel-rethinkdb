@@ -27,8 +27,6 @@ class QueryBuilderTest extends TestCase
 
     public function testNoDocument()
     {
-        $items = DB::table('items')->where('name', 'nothing')->get();
-        $this->assertEquals(array(), $items);
         $item = DB::table('items')->where('name', 'nothing')->first();
         $this->assertEquals(null, $item);
         $item = DB::table('items')->where('id', '51c33d8981fec6813e00000a')->first();
@@ -228,10 +226,10 @@ class QueryBuilderTest extends TestCase
             ['name' => 'spoon', 'type' => 'round'],
             ['name' => 'spoon', 'type' => 'round']
         ]);
-        $items = DB::table('items')->distinct('name')->get(); sort($items);
+        $items = DB::table('items')->distinct('name')->get()->all(); sort($items);
         $this->assertEquals(3, count($items));
         $this->assertEquals(['fork', 'knife', 'spoon'], $items);
-        $types = DB::table('items')->distinct('type')->get(); sort($types);
+        $types = DB::table('items')->distinct('type')->get()->all(); sort($types);
         $this->assertEquals(2, count($types));
         $this->assertEquals(['round', 'sharp'], $types);
     }
