@@ -41,6 +41,9 @@ class TestCase extends Orchestra\Testbench\TestCase {
             $table->index('name')->index('type');
         });
         if (!Schema::hasTable('users')) Schema::create('users');
+        if (!Schema::hasTable('books')) Schema::create('books');
+        if (!Schema::hasTable('roles')) Schema::create('roles');
+        if (!Schema::hasTable('clients')) Schema::create('clients');
     }
 
 }
