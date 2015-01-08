@@ -116,7 +116,7 @@ class Builder extends QueryBuilder
                 $compiled = ['index' => $compiled];
             }
 
-            $this->query->orderBy([$compiled]);
+            $this->query->orderBy($compiled);
         }
     }
 
