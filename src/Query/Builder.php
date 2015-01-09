@@ -72,8 +72,8 @@ class Builder extends QueryBuilder
      */
     public function getFresh($columns = array())
     {
-        $this->compileWheres();
         $this->compileOrders();
+        $this->compileWheres();
 
         if ($this->offset)    $this->query->skip($this->offset);
         if ($this->limit)     $this->query->limit($this->limit);
