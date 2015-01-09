@@ -16,12 +16,13 @@
         "illuminate/contracts": "5.0.*",
         "illuminate/database": "5.0.*",
         "illuminate/support": "5.0.*",
-        "danielmewes/php-rql": "dev-master"
+        "danielmewes/php-rql": "2.0.*"
     },
     "require-dev": {
         "psr/log": "1.0.0",
         "orchestra/testbench": "3.0.*",
-        "codeclimate/php-test-reporter": "0.1.*@dev"
+        "codeclimate/php-test-reporter": "0.1.*@dev",
+        "mockery/mockery": "0.9.*@dev"
     },
     "minimum-stability": "dev"
 }
