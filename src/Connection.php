@@ -29,10 +29,11 @@ class Connection extends \Illuminate\Database\Connection {
         $this->database = $config['database'];
 
         $port = isset($config['port']) ? $config['port'] : 28015;
+        $authKey = isset($config['authKey']) ? $config['authKey'] : null;
 
         // Create the connection
         $this->connection = r\connect($config['host'],
-            $port, $this->database);
+            $port, $this->database, $authKey);
     }
 
     /**
