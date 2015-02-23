@@ -5,8 +5,9 @@ return [
         'rethinkdb' => [
             'name'	   => 'rethinkdb',
             'driver'   => 'rethinkdb',
-            'host'     => 'localhost',
-            'database' => 'unittest',
+            'host'     => env('DB_HOST', 'localhost'),
+            'port'     => env('DB_PORT', 28015),
+            'database' => env('DB_DATABASE', 'unittest'),
         ],
     ]
 ];

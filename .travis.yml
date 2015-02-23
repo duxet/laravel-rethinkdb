@@ -12,7 +12,6 @@ before_install:
 
 before_script:
   - sudo rethinkdb --daemon
-  - rethinkdb admin create database unittest
   - composer self-update
   - composer install --dev --no-interaction
   - mkdir -p build/logs
