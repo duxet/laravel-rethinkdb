@@ -195,7 +195,11 @@ class QueryBuilderTest extends TestCase
         $user = DB::table('users')->find($id);
         $this->assertTrue(is_array($user['messages']));
         $this->assertEquals(1, count($user['messages']));
-        $this->assertEquals($message, $user['messages'][0]);
+
+        // As $user['messages'][0] is an ArrayObject, we cannot simply assert it to array, so we can assert every value of $message array
+        foreach ($message as $key => $value) {
+            $this->assertEquals($value, $user['messages'][0][$key]);
+        }
     }
 
     public function testPull()
@@ -226,10 +230,10 @@ class QueryBuilderTest extends TestCase
             ['name' => 'spoon', 'type' => 'round'],
             ['name' => 'spoon', 'type' => 'round']
         ]);
-        $items = DB::table('items')->distinct('name')->get()->all(); sort($items);
+        $items = DB::table('items')->distinct('name')->get(); sort($items);
         $this->assertEquals(3, count($items));
         $this->assertEquals(['fork', 'knife', 'spoon'], $items);
-        $types = DB::table('items')->distinct('type')->get()->all(); sort($types);
+        $types = DB::table('items')->distinct('type')->get(); sort($types);
         $this->assertEquals(2, count($types));
         $this->assertEquals(['round', 'sharp'], $types);
     }

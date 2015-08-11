@@ -1,5 +1,6 @@
 <?php namespace duxet\Rethinkdb\Eloquent;
 
+use DateTime;
 use Carbon\Carbon;
 use duxet\Rethinkdb\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Relations\Pivot;

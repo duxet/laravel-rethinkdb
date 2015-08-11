@@ -44,7 +44,7 @@ class Query {
 
         if (in_array($method, $autoRun))
         {
-            return $this->run($query)->toNative();
+            return $this->run($query);
         }
 
         $this->query = $query;

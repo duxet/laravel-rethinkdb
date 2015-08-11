@@ -16,13 +16,14 @@
         "illuminate/contracts": ">=5.0.0",
         "illuminate/database": ">=5.0.0",
         "illuminate/support": ">=5.0.0",
-        "danielmewes/php-rql": "2.0.*"
+        "danielmewes/php-rql": "~2.0.1"
     },
     "require-dev": {
         "psr/log": "1.0.0",
         "orchestra/testbench": "3.0.*",
         "codeclimate/php-test-reporter": "0.1.*@dev",
-        "mockery/mockery": "0.9.*@dev"
+        "mockery/mockery": "0.9.*@dev",
+        "phpunit/phpunit": "~4.0"
     },
     "minimum-stability": "dev"
 }
