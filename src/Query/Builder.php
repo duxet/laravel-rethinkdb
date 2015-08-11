@@ -5,7 +5,7 @@ use duxet\Rethinkdb\Connection;
 use duxet\Rethinkdb\Query;
 use duxet\Rethinkdb\RQL\FilterBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Collection;
+use Symfony\Component\VarDumper\Cloner\Cursor;
 
 class Builder extends QueryBuilder
 {
@@ -84,7 +84,10 @@ class Builder extends QueryBuilder
             $this->query->pluck($columns);
         }
 
-        $results = $this->query->run()->toNative();
+        $results = $this->query->run();
+        if (is_object($results)) {
+            $results = $results->toArray();
+        }
 
         if (isset($results['$reql_type$'])
             && $results['$reql_type$'] === 'GROUPED_DATA')
@@ -92,7 +95,7 @@ class Builder extends QueryBuilder
             return $results['data'];
         }
 
-        return new Collection($results);
+        return $results;
     }
 
     /**
@@ -175,7 +178,7 @@ class Builder extends QueryBuilder
     protected function performUpdate($query, array $options = array())
     {
         $this->compileWheres();
-        $result = $this->query->update($query)->run()->toNative();
+        $result = $this->query->update($query)->run();
 
         if (0 == (int)$result['errors']) {
             return $result['replaced'];
@@ -199,7 +202,7 @@ class Builder extends QueryBuilder
             $this->where('id', '=', $id);
         }
         $this->compileWheres();
-        return $this->query->delete()->run()->toNative();
+        return $this->query->delete()->run();
     }
 
     /**
@@ -234,7 +237,7 @@ class Builder extends QueryBuilder
      */
     public function truncate()
     {
-        $result = $this->query->delete()->run()->toNative();
+        $result = $this->query->delete()->run();
         return (0 == (int) $result['errors']);
     }
 
@@ -253,7 +256,7 @@ class Builder extends QueryBuilder
         $this->compileWheres();
         $result = $this->query->update([
             $column => r\row($column)->{$operation}($value)
-        ])->run()->toNative();
+        ])->run();
 
         return (0 == (int) $result['errors']);
     }
@@ -270,7 +273,7 @@ class Builder extends QueryBuilder
         $this->compileWheres();
         $result = $this->query->update([
             $column => r\row($column)->difference([$value])
-        ])->run()->toNative();
+        ])->run();
 
         return (0 == (int) $result['errors']);
     }
@@ -327,7 +330,7 @@ class Builder extends QueryBuilder
         $this->compileWheres();
         $result = $this->query->min($column)
             ->getField($column)->rDefault(null)
-            ->run()->toNative();
+            ->run();
         return $result;
     }
     /**
@@ -341,7 +344,7 @@ class Builder extends QueryBuilder
         $this->compileWheres();
         $result = $this->query->max($column)
             ->getField($column)->rDefault(null)
-            ->run()->toNative();
+            ->run();
         return $result;
     }
 
@@ -355,7 +358,7 @@ class Builder extends QueryBuilder
     {
         $this->compileWheres();
         $result = $this->query->avg($column)
-            ->rDefault(null)->run()->toNative();
+            ->rDefault(null)->run();
         return $result;
     }
 
@@ -372,7 +375,7 @@ class Builder extends QueryBuilder
         $this->compileWheres();
         $result = $this->query->replace(function($doc) use ($columns) {
             return $doc->without($columns);
-        })->run()->toNative();
+        })->run();
 
         return (0 == (int) $result['errors']);
     }
@@ -441,5 +444,4 @@ class Builder extends QueryBuilder
         }
         return parent::__call($method, $parameters);
     }
-
 }

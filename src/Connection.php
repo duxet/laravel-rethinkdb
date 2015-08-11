@@ -6,12 +6,6 @@ use duxet\Rethinkdb\Query\Builder as QueryBuilder;
 class Connection extends \Illuminate\Database\Connection {
 
     /**
-     * The RethinkDB database handler.
-     *
-     * @var MongoDB
-     */
-    protected $db;
-    /**
      * The RethinkDB connection handler.
      *
      * @var r\Connection
