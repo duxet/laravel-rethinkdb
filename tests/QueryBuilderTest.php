@@ -2,7 +2,6 @@
 
 class QueryBuilderTest extends TestCase
 {
-
     public function tearDown()
     {
         DB::table('users')->truncate();
@@ -53,8 +52,8 @@ class QueryBuilderTest extends TestCase
 
         // Test for fixed id
         $id = DB::table('users')->insertGetId([
-            'id' => 'john',
-            'name' => 'John Doe',
+            'id'    => 'john',
+            'name'  => 'John Doe',
         ]);
         $this->assertInternalType('string', $id);
     }
@@ -157,7 +156,7 @@ class QueryBuilderTest extends TestCase
             ],
             [
                 'tags' => ['tag2'],
-            ]
+            ],
         ]);
         $items = DB::table('items')->where('tags', 'contains', 'tag2')->get();
         $this->assertEquals(2, count($items));
@@ -420,14 +419,14 @@ class QueryBuilderTest extends TestCase
                 'addresses' => [
                     ['city' => 'Ghent'],
                     ['city' => 'Paris'],
-                ]
+                ],
             ],
             [
                 'name'      => 'Jane Doe',
                 'addresses' => [
                     ['city' => 'Brussels'],
                     ['city' => 'Paris'],
-                ]
+                ],
             ]
         ]);
         $users = DB::table('users')->where('addresses', 'contains', ['city' => 'Brussels'])->get();

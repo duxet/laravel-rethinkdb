@@ -2,20 +2,12 @@
 
 namespace duxet\Rethinkdb\Eloquent;
 
-use DateTime;
 use Carbon\Carbon;
-use duxet\Rethinkdb\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use DateTime;
 use duxet\Rethinkdb\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use duxet\Rethinkdb\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Model extends \Illuminate\Database\Eloquent\Model
 {
@@ -42,7 +34,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Return DateTime object as Carbon instance.
      *
-     * @param DateTime  $value
+     * @param DateTime $value
      * @return \Carbon\Carbon
      */
     protected function asDateTime($value)
@@ -62,6 +54,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         if ($connection instanceof \duxet\Rethinkdb\Connection) {
             return new QueryBuilder($connection);
         }
+
         return parent::newBaseQueryBuilder();
     }
 
@@ -69,6 +62,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * Create a new Eloquent query builder for the model.
      *
      * @param \duxet\Rethinkdb\Query\Builder $query
+     *
      * @return \duxet\Rethinkdb\Eloquent\Builder|static
      */
     public function newEloquentBuilder($query)
@@ -79,10 +73,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Define an inverse one-to-one or many relationship.
      *
-     * @param string  $related
-     * @param string  $foreignKey
-     * @param string  $otherKey
-     * @param string  $relation
+     * @param string $related
+     * @param string $foreignKey
+     * @param string $otherKey
+     * @param string $relation
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function belongsTo($related, $foreignKey = null, $otherKey = null, $relation = null)
@@ -106,15 +100,16 @@ class Model extends \Illuminate\Database\Eloquent\Model
         // actually be responsible for retrieving and hydrating every relations.
         $query = $instance->newQuery();
         $otherKey = $otherKey ?: $instance->getKeyName();
+
         return new BelongsTo($query, $this, $foreignKey, $otherKey, $relation);
     }
 
     /**
      * Define a one-to-one relationship.
      *
-     * @param string  $related
-     * @param string  $foreignKey
-     * @param string  $localKey
+     * @param string $related
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function hasOne($related, $foreignKey = null, $localKey = null)
@@ -122,15 +117,16 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $foreignKey = $foreignKey ?: $this->getForeignKey();
         $instance = new $related();
         $localKey = $localKey ?: $this->getKeyName();
+
         return new HasOne($instance->newQuery(), $this, $foreignKey, $localKey);
     }
 
     /**
      * Define a one-to-many relationship.
      *
-     * @param string  $related
-     * @param string  $foreignKey
-     * @param string  $localKey
+     * @param string $related
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function hasMany($related, $foreignKey = null, $localKey = null)
@@ -138,6 +134,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $foreignKey = $foreignKey ?: $this->getForeignKey();
         $instance = new $related();
         $localKey = $localKey ?: $this->getKeyName();
+
         return new HasMany($instance->newQuery(), $this, $foreignKey, $localKey);
     }
 }

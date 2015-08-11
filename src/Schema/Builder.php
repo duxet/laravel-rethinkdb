@@ -2,11 +2,10 @@
 
 namespace duxet\RethinkDB\Schema;
 
-use r;
 use Closure;
 use duxet\Rethinkdb\Connection;
 use duxet\Rethinkdb\Schema\Blueprint;
-use Illuminate\Database\Schema\Blueprint as IlluminateBlueprint;
+use r;
 
 class Builder extends \Illuminate\Database\Schema\Builder
 {
@@ -24,6 +23,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
      * Determine if the given table exists.
      *
      * @param string $table
+     *
      * @return bool
      */
     public function hasTable($table)
@@ -38,8 +38,9 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Create a new table on the schema.
      *
-     * @param string $table
-     * @param Closure $callback
+     * @param string    $table
+     * @param Closure   $callback
+     *
      * @return bool
      */
     public function create($table, Closure $callback = null)
@@ -54,7 +55,8 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Drop a table from the schema.
      *
-     * @param  string  $table
+     * @param string $table
+     *
      * @return bool
      */
     public function drop($table)
@@ -66,8 +68,9 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Modify a table on the schema.
      *
-     * @param string $table
-     * @param Closure $callback
+     * @param string    $table
+     * @param Closure   $callback
+     *
      * @return bool
      */
     public function table($table, Closure $callback)
@@ -89,5 +92,4 @@ class Builder extends \Illuminate\Database\Schema\Builder
     {
         return new Blueprint($this->connection, $table);
     }
-
 }

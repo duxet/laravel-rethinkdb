@@ -2,11 +2,11 @@
 
 namespace duxet\Rethinkdb\Query;
 
-use r;
 use duxet\Rethinkdb\Connection;
 use duxet\Rethinkdb\Query;
 use duxet\Rethinkdb\RQL\FilterBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use r;
 
 class Builder extends QueryBuilder
 {
@@ -35,7 +35,7 @@ class Builder extends QueryBuilder
         '&', '|', '^', '<<', '>>',
         'rlike', 'regexp', 'not regexp',
         '~', '~*', '!~', '!~*',
-        'contains', 'exists', 'type', 'mod', 'size'
+        'contains', 'exists', 'type', 'mod', 'size',
     ];
 
     /**
@@ -53,6 +53,7 @@ class Builder extends QueryBuilder
      * Set the collection which the query is targeting.
      *
      * @param string $table
+     *
      * @return Builder
      */
     public function from($table)
@@ -61,6 +62,7 @@ class Builder extends QueryBuilder
             $this->table = r\table($table);
             $this->query->table($table);
         }
+
         return parent::from($table);
     }
 
@@ -68,6 +70,7 @@ class Builder extends QueryBuilder
      * Execute the query as a fresh "select" statement.
      *
      * @param array $columns
+     *
      * @return array|static[]
      */
     public function getFresh($columns = [])
@@ -85,7 +88,7 @@ class Builder extends QueryBuilder
             $columns = $this->columns;
         }
 
-        if ( ! empty($columns) && $columns[0] != '*') {
+        if (!empty($columns) && $columns[0] != '*') {
             $this->query->pluck($columns);
         }
 
@@ -131,6 +134,7 @@ class Builder extends QueryBuilder
      * Insert a new record into the database.
      *
      * @param array $values
+     *
      * @return bool
      */
     public function insert(array $values)
@@ -143,8 +147,9 @@ class Builder extends QueryBuilder
     /**
      * Insert a new record and get the value of the primary key.
      *
-     * @param array $values
-     * @param string $sequence
+     * @param array     $values
+     * @param string    $sequence
+     *
      * @return int
      */
     public function insertGetId(array $values, $sequence = null)
@@ -181,7 +186,7 @@ class Builder extends QueryBuilder
      * @param array $options
      * @return int
      */
-    protected function performUpdate($query, array $options = array())
+    protected function performUpdate($query, array $options = [])
     {
         $this->compileWheres();
         $result = $this->query->update($query)->run();
@@ -197,6 +202,7 @@ class Builder extends QueryBuilder
      * Delete a record from the database.
      *
      * @param mixed $id
+     *
      * @return int
      */
     public function delete($id = null)
@@ -208,6 +214,7 @@ class Builder extends QueryBuilder
             $this->where('id', '=', $id);
         }
         $this->compileWheres();
+
         return $this->query->delete()->run();
     }
 
@@ -226,7 +233,7 @@ class Builder extends QueryBuilder
             return;
         }
 
-        $this->query->filter(function($document) use ($wheres) {
+        $this->query->filter(function ($document) use ($wheres) {
             $builder = new FilterBuilder($document);
 
             return $builder->compileWheres($wheres);
@@ -256,7 +263,8 @@ class Builder extends QueryBuilder
      *
      * @param mixed $column
      * @param mixed $value
-     * @param bool $unique
+     * @param bool  $unique
+     *
      * @return bool
      */
     public function push($column, $value = null, $unique = false)
@@ -276,6 +284,7 @@ class Builder extends QueryBuilder
      *
      * @param mixed $column
      * @param mixed $value
+     *
      * @return bool
      */
     public function pull($column, $value = null)
@@ -292,6 +301,7 @@ class Builder extends QueryBuilder
      * Force the query to only return distinct results.
      *
      * @var string $column
+     *
      * @return Builder
      */
     public function distinct($column = null)
@@ -315,6 +325,7 @@ class Builder extends QueryBuilder
     {
         $this->compileWheres();
         $result = $this->query->count();
+
         return (int) $result;
     }
 
@@ -322,12 +333,14 @@ class Builder extends QueryBuilder
      * Retrieve the sum of the values of a given column.
      *
      * @param string $column
+     *
      * @return mixed
      */
     public function sum($column)
     {
         $this->compileWheres();
         $result = $this->query->sum($column);
+
         return $result;
     }
 
@@ -335,6 +348,7 @@ class Builder extends QueryBuilder
      * Retrieve the minimum value of a given column.
      *
      * @param string $column
+     *
      * @return mixed
      */
     public function min($column)
@@ -343,12 +357,14 @@ class Builder extends QueryBuilder
         $result = $this->query->min($column)
             ->getField($column)->rDefault(null)
             ->run();
+
         return $result;
     }
     /**
      * Retrieve the maximum value of a given column.
      *
      * @param string $column
+     *
      * @return mixed
      */
     public function max($column)
@@ -357,6 +373,7 @@ class Builder extends QueryBuilder
         $result = $this->query->max($column)
             ->getField($column)->rDefault(null)
             ->run();
+
         return $result;
     }
 
@@ -364,6 +381,7 @@ class Builder extends QueryBuilder
      * Retrieve the average of the values of a given column.
      *
      * @param string $column
+     *
      * @return mixed
      */
     public function avg($column)
@@ -371,18 +389,20 @@ class Builder extends QueryBuilder
         $this->compileWheres();
         $result = $this->query->avg($column)
             ->rDefault(null)->run();
+
         return $result;
     }
 
     /**
      * Remove one or more fields.
      *
-     * @param mixed$columns
+     * @param mixed $columns
+     *
      * @return int
      */
     public function drop($columns)
     {
-        if ( ! is_array($columns)) {
+        if (!is_array($columns)) {
             $columns = array($columns);
         }
 
@@ -398,12 +418,13 @@ class Builder extends QueryBuilder
      * Add a "group by" clause to the query.
      *
      * @param array|string $column,...
+     *
      * @return $this
      */
     public function groupBy()
     {
         foreach (func_get_args() as $arg) {
-            $this->query->group($arg)->ungroup()->map(function($doc) {
+            $this->query->group($arg)->ungroup()->map(function ($doc) {
                 return $doc('reduction')->nth(0);
             });
         }
@@ -413,9 +434,10 @@ class Builder extends QueryBuilder
     /**
      * Add an "order by" clause to the query.
      *
-     * @param string $column
-     * @param string $direction
-     * @param bool $index
+     * @param string    $column
+     * @param string    $direction
+     * @param bool      $index
+     *
      * @return $this
      */
     public function orderBy($column, $direction = 'asc', $index = false)
@@ -423,16 +445,18 @@ class Builder extends QueryBuilder
         $property = $this->unions ? 'unionOrders' : 'orders';
         $direction = strtolower($direction) == 'asc' ? 'asc' : 'desc';
         $this->{$property}[] = compact('column', 'direction', 'index');
+
         return $this;
     }
 
     /**
      * Add a where between statement to the query.
      *
-     * @param string $column
-     * @param array $values
-     * @param string $boolean
-     * @param bool $not
+     * @param string    $column
+     * @param array     $values
+     * @param string    $boolean
+     * @param bool      $not
+     *
      * @return Builder
      */
     public function whereBetween($column, array $values, $boolean = 'and', $not = false)
@@ -445,8 +469,9 @@ class Builder extends QueryBuilder
     /**
      * Handle dynamic method calls into the method.
      *
-     * @param string $method
-     * @param array $parameters
+     * @param string    $method
+     * @param array     $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)

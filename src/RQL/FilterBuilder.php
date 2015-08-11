@@ -16,8 +16,9 @@ class FilterBuilder
         $chain = null;
 
         foreach ($wheres as $i => &$where) {
-            $method = 'build' . $where['type'] .'filter';
-            $filter = self::{$method}($where);
+            $method = 'build' . $where['type'].'filter';
+            $filter = self::{$method}
+            ($where);
 
             if (!$chain) {
                 $chain = $filter;
@@ -28,7 +29,7 @@ class FilterBuilder
                 $chain = $chain->rOr($filter);
             }
             // If there is more wheres, then wrap existing filters with and
-            else if ($chain && count($wheres) > 1) {
+            elseif ($chain && count($wheres) > 1) {
                 $chain = $chain->rAnd($filter);
             }
         }
@@ -64,31 +65,36 @@ class FilterBuilder
                 return $field->contains($value);
             case 'exists':
                 $field = $field->rDefault(null);
+
                 return ($value) ? $field : $field->not();
             case 'type':
                 return $field->typeOf()->eq(strtoupper($value));
             case 'mod':
                 $mod = $field->mod((int) $value[0])->eq((int) $value[1]);
+
                 return $field->typeOf()->eq('NUMBER')->rAnd($mod);
             case 'size':
                 $size = $field->count()->eq((int) $value);
+
                 return $field->typeOf()->eq('ARRAY')->rAnd($size);
             case 'regexp':
                 $match = $field->match($value);
+
                 return $field->typeOf()->eq('STRING')->rAnd($match);
             case 'not regexp':
                 $match = $field->match($value)->not();
+
                 return $field->typeOf()->eq('STRING')->rAnd($match);
             case 'like':
                 $regex = str_replace('%', '', $value);
                 // Convert like to regular expression.
                 if (!starts_with($value, '%')) {
-                    $regex = '^' . $regex;
+                    $regex = '^'.$regex;
                 }
                 if (!ends_with($value, '%')) {
-                    $regex = $regex . '$';
+                    $regex = $regex. '$';
                 }
-                $match = $field->match('(?i)'. $regex);
+                $match = $field->match('(?i)'.$regex);
 
                 return $field->typeOf()->eq('STRING')->rAnd($match);
             default:
@@ -102,9 +108,11 @@ class FilterBuilder
         $values = $where['values'];
         if ($where['not']) {
             $or = $row->ge($values[1]);
+
             return $row->le($values[0])->rOr($or);
         } else {
             $and = $row->le($values[1]);
+
             return $row->ge($values[0])->rAnd($and);
         }
 
@@ -114,6 +122,7 @@ class FilterBuilder
     {
         $where['operator'] = '=';
         $where['value'] = null;
+
         return $this->buildBasicFilter($where);
     }
 
@@ -143,6 +152,7 @@ class FilterBuilder
     protected function getField($name)
     {
         $document = $this->document;
+
         return $document($name);
     }
 }

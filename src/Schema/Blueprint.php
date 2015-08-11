@@ -2,17 +2,17 @@
 
 namespace duxet\RethinkDB\Schema;
 
-use r;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
+use r;
 
 class Blueprint extends \Illuminate\Database\Schema\Blueprint
 {
     /**
      * Create a new schema blueprint.
      *
-     * @param Connection $connection
-     * @param string $table
+     * @param Connection    $connection
+     * @param string        $table
      */
     public function __construct(Connection $connection, $table)
     {
@@ -23,8 +23,9 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     /**
      * Execute the blueprint against the database.
      *
-     * @param \Illuminate\Database\Connection $connection
-     * @param \Illuminate\Database\Schema\Grammars\Grammar $grammar
+     * @param \Illuminate\Database\Connection               $connection
+     * @param \Illuminate\Database\Schema\Grammars\Grammar  $grammar
+     *
      * @return void
      */
     public function build(Connection $connection, Grammar $grammar)
@@ -58,8 +59,9 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     /**
      * Specify an index for the collection.
      *
-     * @param string $column
-     * @param mixed $options
+     * @param string    $column
+     * @param mixed     $options
+     *
      * @return Blueprint
      */
     public function index($column, $options = null)
@@ -68,6 +70,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         $db = r\db($this->connection->getDatabaseName());
         $db->table($this->table)->indexCreate($column)
             ->run($conn);
+
         return $this;
     }
 }

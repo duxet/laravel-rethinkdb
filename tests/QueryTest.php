@@ -2,7 +2,6 @@
 
 class QueryTest extends TestCase
 {
-
     public static function setUpBeforeClass()
     {
         User::create(['name' => 'John Doe', 'age' => 35, 'title' => 'admin']);
@@ -175,26 +174,26 @@ class QueryTest extends TestCase
 
     public function testSubquery()
     {
-        $users = User::where('title', 'admin')->orWhere(function($query) {
+        $users = User::where('title', 'admin')->orWhere(function ($query) {
             $query->where('name', 'Tommy Toe')
                 ->orWhere('name', 'Error');
         })
             ->get();
         $this->assertEquals(5, count($users));
-        $users = User::where('title', 'user')->where(function($query) {
+        $users = User::where('title', 'user')->where(function ($query) {
             $query->where('age', 35)
                 ->orWhere('name', 'like', '%harry%');
         })
             ->get();
         $this->assertEquals(2, count($users));
-        $users = User::where('age', 35)->orWhere(function($query) {
+        $users = User::where('age', 35)->orWhere(function ($query) {
             $query->where('title', 'admin')
                 ->orWhere('name', 'Error');
         })
             ->get();
         $this->assertEquals(5, count($users));
         $users = User::where('title', 'admin')
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('age', '>', 15)
                     ->orWhere('name', 'Harry Hoe');
             })
@@ -204,14 +203,14 @@ class QueryTest extends TestCase
 
     public function testMultipleOr()
     {
-        $users = User::where(function($query) {
+        $users = User::where(function ($query) {
             $query->where('age', 35)->orWhere('age', 33);
         })
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('name', 'John Doe')->orWhere('name', 'Jane Doe');
             })->get();
         $this->assertEquals(2, count($users));
-        $users = User::where(function($query) {
+        $users = User::where(function ($query) {
             $query->orWhere('age', 35)->orWhere('age', 33);
         })
             ->where(function($query) {

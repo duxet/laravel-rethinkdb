@@ -25,8 +25,8 @@ class RethinkdbServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->resolving('db', function($db) {
-            $db->extend('rethinkdb', function($config) {
+        $this->app->resolving('db', function ($db) {
+            $db->extend('rethinkdb', function ($config) {
                 return new Connection($config);
             });
         });
