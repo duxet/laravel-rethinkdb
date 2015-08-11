@@ -28,7 +28,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
     {
         $conn = $this->connection->getConnection();
         $db = r\db($this->connection->getDatabaseName());
-        $tables = $db->tableList()->run($conn)->toNative();
+        $tables = $db->tableList()->run($conn);
 
         return in_array($table, $tables);
     }
