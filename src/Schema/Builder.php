@@ -62,7 +62,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function drop($table)
     {
         $blueprint = $this->createBlueprint($table);
-        
+
         return $blueprint->drop();
     }
 
