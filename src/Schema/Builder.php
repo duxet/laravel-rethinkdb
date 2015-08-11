@@ -62,14 +62,15 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function drop($table)
     {
         $blueprint = $this->createBlueprint($table);
+        
         return $blueprint->drop();
     }
 
     /**
      * Modify a table on the schema.
      *
-     * @param string    $table
-     * @param Closure   $callback
+     * @param string  $table
+     * @param Closure $callback
      *
      * @return bool
      */

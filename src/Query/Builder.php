@@ -141,6 +141,7 @@ class Builder extends QueryBuilder
     {
         $this->compileWheres();
         $result = $this->query->insert($values);
+
         return (0 == (int) $result['errors']);
     }
 
@@ -185,6 +186,7 @@ class Builder extends QueryBuilder
      *
      * @param array $query
      * @param array $options
+     *
      * @return int
      */
     protected function performUpdate($query, array $options = [])
@@ -302,7 +304,7 @@ class Builder extends QueryBuilder
     /**
      * Force the query to only return distinct results.
      *
-     * @var string|null $column
+     * @var string|null
      *
      * @return Builder
      */
@@ -431,6 +433,7 @@ class Builder extends QueryBuilder
                 return $doc('reduction')->nth(0);
             });
         }
+
         return $this;
     }
 
