@@ -1,10 +1,12 @@
 <?php
 
-class SchemaBuilderTest extends TestCase {
-
+class SchemaBuilderTest extends TestCase
+{
     public function tearDown()
     {
-        if (Schema::hasTable('newtable')) Schema::drop('newtable');
+        if (Schema::hasTable('newtable')) {
+            Schema::drop('newtable');
+        }
     }
 
     public function testCreate()
@@ -17,8 +19,7 @@ class SchemaBuilderTest extends TestCase {
     {
         $instance = $this;
 
-        Schema::create('newtable', function($collection) use ($instance)
-        {
+        Schema::create('newtable', function($collection) use ($instance) {
             $instance->assertInstanceOf('duxet\RethinkDB\Schema\Blueprint', $collection);
         });
 
@@ -36,10 +37,8 @@ class SchemaBuilderTest extends TestCase {
     {
         $instance = $this;
 
-        Schema::table('newtable', function($table) use ($instance)
-        {
+        Schema::table('newtable', function($table) use ($instance) {
             $instance->assertInstanceOf('duxet\RethinkDB\Schema\Blueprint', $table);
         });
     }
-
 }

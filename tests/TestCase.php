@@ -1,11 +1,11 @@
 <?php
 
-class TestCase extends Orchestra\Testbench\TestCase {
-
+class TestCase extends Orchestra\Testbench\TestCase
+{
     /**
      * Get package providers.
      *
-     * @param  Illuminate\Foundation\Application    $app
+     * @param Illuminate\Foundation\Application $app
      * @return array
      */
     protected function getPackageProviders($app)
@@ -18,7 +18,7 @@ class TestCase extends Orchestra\Testbench\TestCase {
     /**
      * Define environment setup.
      *
-     * @param  Illuminate\Foundation\Application    $app
+     * @param Illuminate\Foundation\Application $app
      * @return void
      */
     protected function getEnvironmentSetUp($app)
@@ -41,17 +41,29 @@ class TestCase extends Orchestra\Testbench\TestCase {
         $connection = DB::connection()->getConnection();
         try {
             r\dbCreate($database)->run($connection);
-        } catch(\Exception $e) {}
+        } catch(\Exception $e) {
+        }
 
         // FIXME: There should be better way of doing this.
-        if (!Schema::hasTable('items')) Schema::create('items', function($table) {
-            $table->index('name')->index('type');
-        });
-        if (!Schema::hasTable('users')) Schema::create('users');
-        if (!Schema::hasTable('books')) Schema::create('books');
-        if (!Schema::hasTable('roles')) Schema::create('roles');
-        if (!Schema::hasTable('clients')) Schema::create('clients');
-        if (!Schema::hasTable('addresses')) Schema::create('addresses');
+        if (!Schema::hasTable('items')) {
+            Schema::create('items', function($table) {
+                $table->index('name')->index('type');
+            });
+        }
+        if (!Schema::hasTable('users')) {
+            Schema::create('users');
+        }
+        if (!Schema::hasTable('books')) {
+            Schema::create('books');
+        }
+        if (!Schema::hasTable('roles')) {
+            Schema::create('roles');
+        }
+        if (!Schema::hasTable('clients')) {
+            Schema::create('clients');
+        }
+        if (!Schema::hasTable('addresses')) {
+            Schema::create('addresses');
+        }
     }
-
 }

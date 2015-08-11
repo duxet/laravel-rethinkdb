@@ -1,6 +1,7 @@
 <?php
 
-class QueryTest extends TestCase {
+class QueryTest extends TestCase
+{
 
     public static function setUpBeforeClass()
     {
@@ -109,11 +110,11 @@ class QueryTest extends TestCase {
 
     public function testIn()
     {
-        $users = User::whereIn('age', array(13, 23))->get();
+        $users = User::whereIn('age', [13, 23])->get();
         $this->assertEquals(2, count($users));
-        $users = User::whereIn('age', array(33, 35, 13))->get();
+        $users = User::whereIn('age', [33, 35, 13])->get();
         $this->assertEquals(6, count($users));
-        $users = User::whereNotIn('age', array(33, 35))->get();
+        $users = User::whereNotIn('age', [33, 35])->get();
         $this->assertEquals(4, count($users));
         // FIXME: https://github.com/danielmewes/php-rql/issues/75
         //$users = User::whereNotNull('age')
@@ -174,30 +175,26 @@ class QueryTest extends TestCase {
 
     public function testSubquery()
     {
-        $users = User::where('title', 'admin')->orWhere(function($query)
-        {
+        $users = User::where('title', 'admin')->orWhere(function($query) {
             $query->where('name', 'Tommy Toe')
                 ->orWhere('name', 'Error');
         })
             ->get();
         $this->assertEquals(5, count($users));
-        $users = User::where('title', 'user')->where(function($query)
-        {
+        $users = User::where('title', 'user')->where(function($query) {
             $query->where('age', 35)
                 ->orWhere('name', 'like', '%harry%');
         })
             ->get();
         $this->assertEquals(2, count($users));
-        $users = User::where('age', 35)->orWhere(function($query)
-        {
+        $users = User::where('age', 35)->orWhere(function($query) {
             $query->where('title', 'admin')
                 ->orWhere('name', 'Error');
         })
             ->get();
         $this->assertEquals(5, count($users));
         $users = User::where('title', 'admin')
-            ->where(function($query)
-            {
+            ->where(function($query) {
                 $query->where('age', '>', 15)
                     ->orWhere('name', 'Harry Hoe');
             })
@@ -207,24 +204,19 @@ class QueryTest extends TestCase {
 
     public function testMultipleOr()
     {
-        $users = User::where(function($query)
-        {
+        $users = User::where(function($query) {
             $query->where('age', 35)->orWhere('age', 33);
         })
-            ->where(function($query)
-            {
+            ->where(function($query) {
                 $query->where('name', 'John Doe')->orWhere('name', 'Jane Doe');
             })->get();
         $this->assertEquals(2, count($users));
-        $users = User::where(function($query)
-        {
+        $users = User::where(function($query) {
             $query->orWhere('age', 35)->orWhere('age', 33);
         })
-            ->where(function($query)
-            {
+            ->where(function($query) {
                 $query->orWhere('name', 'John Doe')->orWhere('name', 'Jane Doe');
             })->get();
         $this->assertEquals(2, count($users));
     }
-
 }

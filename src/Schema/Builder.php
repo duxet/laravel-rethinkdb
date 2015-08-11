@@ -1,4 +1,6 @@
-<?php namespace duxet\RethinkDB\Schema;
+<?php
+
+namespace duxet\RethinkDB\Schema;
 
 use r;
 use Closure;
@@ -11,7 +13,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Create a new database Schema manager.
      *
-     * @param  Connection $connection
+     * @param Connection $connection
      */
     public function __construct(Connection $connection)
     {
@@ -21,7 +23,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Determine if the given table exists.
      *
-     * @param  string  $table
+     * @param string $table
      * @return bool
      */
     public function hasTable($table)
@@ -36,16 +38,15 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Create a new table on the schema.
      *
-     * @param  string   $table
-     * @param  Closure  $callback
+     * @param string $table
+     * @param Closure $callback
      * @return bool
      */
     public function create($table, Closure $callback = null)
     {
         $blueprint = $this->createBlueprint($table);
         $blueprint->create();
-        if ($callback)
-        {
+        if ($callback) {
             $callback($blueprint);
         }
     }
@@ -65,15 +66,14 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Modify a table on the schema.
      *
-     * @param  string   $table
-     * @param  Closure  $callback
+     * @param string $table
+     * @param Closure $callback
      * @return bool
      */
     public function table($table, Closure $callback)
     {
         $blueprint = $this->createBlueprint($table);
-        if ($callback)
-        {
+        if ($callback) {
             $callback($blueprint);
         }
     }
@@ -81,8 +81,8 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /**
      * Create a new command set with a Closure.
      *
-     * @param  string    $table
-     * @param  Closure   $callback
+     * @param string $table
+     * @param Closure $callback
      * @return Blueprint
      */
     protected function createBlueprint($table, Closure $callback = null)
