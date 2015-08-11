@@ -36,7 +36,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint {
     {
         $conn = $this->connection->getConnection();
         $db = r\db($this->connection->getDatabaseName());
-        $db->tableCreate($this->table)->run($conn)->toNative();
+        $db->tableCreate($this->table)->run($conn);
     }
 
     /**
@@ -48,7 +48,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint {
     {
         $conn = $this->connection->getConnection();
         $db = r\db($this->connection->getDatabaseName());
-        $db->tableDrop($this->table)->run($conn)->toNative();
+        $db->tableDrop($this->table)->run($conn);
     }
 
     /**
@@ -63,7 +63,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint {
         $conn = $this->connection->getConnection();
         $db = r\db($this->connection->getDatabaseName());
         $db->table($this->table)->indexCreate($column)
-            ->run($conn)->toNative();
+            ->run($conn);
         return $this;
     }
 
