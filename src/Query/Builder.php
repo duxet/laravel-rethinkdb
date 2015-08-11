@@ -147,8 +147,8 @@ class Builder extends QueryBuilder
     /**
      * Insert a new record and get the value of the primary key.
      *
-     * @param array     $values
-     * @param string    $sequence
+     * @param array  $values
+     * @param string $sequence
      *
      * @return int
      */
@@ -172,6 +172,7 @@ class Builder extends QueryBuilder
      *
      * @param array $values
      * @param array $options
+     *
      * @return int
      */
     public function update(array $values, array $options = [])
@@ -255,6 +256,7 @@ class Builder extends QueryBuilder
     public function truncate()
     {
         $result = $this->query->delete()->run();
+
         return (0 == (int) $result['errors']);
     }
 
@@ -300,7 +302,7 @@ class Builder extends QueryBuilder
     /**
      * Force the query to only return distinct results.
      *
-     * @var string $column
+     * @var string|null $column
      *
      * @return Builder
      */
@@ -319,6 +321,7 @@ class Builder extends QueryBuilder
      * Retrieve the "count" result of the query.
      *
      * @param string $columns
+     *
      * @return int
      */
     public function count($columns = null)
@@ -403,7 +406,7 @@ class Builder extends QueryBuilder
     public function drop($columns)
     {
         if (!is_array($columns)) {
-            $columns = array($columns);
+            $columns = [$columns];
         }
 
         $this->compileWheres();
@@ -434,9 +437,9 @@ class Builder extends QueryBuilder
     /**
      * Add an "order by" clause to the query.
      *
-     * @param string    $column
-     * @param string    $direction
-     * @param bool      $index
+     * @param string $column
+     * @param string $direction
+     * @param bool   $index
      *
      * @return $this
      */
@@ -452,10 +455,10 @@ class Builder extends QueryBuilder
     /**
      * Add a where between statement to the query.
      *
-     * @param string    $column
-     * @param array     $values
-     * @param string    $boolean
-     * @param bool      $not
+     * @param string $column
+     * @param array  $values
+     * @param string $boolean
+     * @param bool   $not
      *
      * @return Builder
      */
@@ -463,21 +466,22 @@ class Builder extends QueryBuilder
     {
         $type = 'between';
         $this->wheres[] = compact('column', 'type', 'boolean', 'values', 'not');
+
         return $this;
     }
 
     /**
      * Handle dynamic method calls into the method.
      *
-     * @param string    $method
-     * @param array     $parameters
+     * @param string $method
+     * @param array  $parameters
      *
      * @return mixed
      */
     public function __call($method, $parameters)
     {
         if ($method == 'unset') {
-            return call_user_func_array(array($this, 'drop'), $parameters);
+            return call_user_func_array([$this, 'drop'], $parameters);
         }
 
         return parent::__call($method, $parameters);

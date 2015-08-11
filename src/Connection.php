@@ -2,8 +2,8 @@
 
 namespace duxet\Rethinkdb;
 
-use r;
 use duxet\Rethinkdb\Query\Builder as QueryBuilder;
+use r;
 
 class Connection extends \Illuminate\Database\Connection
 {
@@ -36,6 +36,7 @@ class Connection extends \Illuminate\Database\Connection
      * Begin a fluent query against a database table.
      *
      * @param string $table
+     *
      * @return QueryBuilder
      */
     public function table($table)

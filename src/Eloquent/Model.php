@@ -35,6 +35,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * Return DateTime object as Carbon instance.
      *
      * @param DateTime $value
+     *
      * @return \Carbon\Carbon
      */
     protected function asDateTime($value)
@@ -77,6 +78,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * @param string $foreignKey
      * @param string $otherKey
      * @param string $relation
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function belongsTo($related, $foreignKey = null, $otherKey = null, $relation = null)
@@ -110,6 +112,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * @param string $related
      * @param string $foreignKey
      * @param string $localKey
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function hasOne($related, $foreignKey = null, $localKey = null)
@@ -127,6 +130,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * @param string $related
      * @param string $foreignKey
      * @param string $localKey
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function hasMany($related, $foreignKey = null, $localKey = null)

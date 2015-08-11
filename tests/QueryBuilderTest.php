@@ -427,7 +427,7 @@ class QueryBuilderTest extends TestCase
                     ['city' => 'Brussels'],
                     ['city' => 'Paris'],
                 ],
-            ]
+            ],
         ]);
         $users = DB::table('users')->where('addresses', 'contains', ['city' => 'Brussels'])->get();
         $this->assertEquals(1, count($users));

@@ -6,7 +6,7 @@ use r;
 
 class FilterBuilder
 {
-    function __construct($document)
+    public function __construct($document)
     {
         $this->document = $document;
     }
@@ -16,7 +16,7 @@ class FilterBuilder
         $chain = null;
 
         foreach ($wheres as $i => &$where) {
-            $method = 'build' . $where['type'].'filter';
+            $method = 'build'.$where['type'].'filter';
             $filter = self::{$method}
             ($where);
 
@@ -92,7 +92,7 @@ class FilterBuilder
                     $regex = '^'.$regex;
                 }
                 if (!ends_with($value, '%')) {
-                    $regex = $regex. '$';
+                    $regex = $regex.'$';
                 }
                 $match = $field->match('(?i)'.$regex);
 
@@ -115,7 +115,6 @@ class FilterBuilder
 
             return $row->ge($values[0])->rAnd($and);
         }
-
     }
 
     protected function buildNullFilter($where)
