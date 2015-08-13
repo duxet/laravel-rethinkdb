@@ -1,9 +1,11 @@
-<?php namespace duxet\Rethinkdb;
+<?php
+
+namespace duxet\Rethinkdb;
 
 use r;
 
-class Query {
-
+class Query
+{
     /**
      * The connection instance.
      *
@@ -32,8 +34,9 @@ class Query {
     /**
      * Handle dynamic method calls.
      *
-     * @param  string  $method
-     * @param  array   $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -42,8 +45,7 @@ class Query {
 
         $query = call_user_func_array([$this->query, $method], $parameters);
 
-        if (in_array($method, $autoRun))
-        {
+        if (in_array($method, $autoRun)) {
             return $this->run($query);
         }
 
@@ -66,5 +68,4 @@ class Query {
 
         return $result;
     }
-
 }

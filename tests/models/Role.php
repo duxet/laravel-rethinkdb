@@ -2,8 +2,8 @@
 
 use \duxet\Rethinkdb\Eloquent\Model;
 
-class Role extends Model {
-
+class Role extends Model
+{
     protected $table = 'roles';
     protected static $unguarded = true;
 
@@ -11,5 +11,4 @@ class Role extends Model {
     {
         return $this->belongsTo('User');
     }
-
 }

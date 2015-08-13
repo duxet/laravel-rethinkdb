@@ -2,7 +2,6 @@
 
 class QueryBuilderTest extends TestCase
 {
-
     public function tearDown()
     {
         DB::table('users')->truncate();
@@ -53,7 +52,8 @@ class QueryBuilderTest extends TestCase
 
         // Test for fixed id
         $id = DB::table('users')->insertGetId([
-            'id' => 'john', 'name' => 'John Doe'
+            'id'    => 'john',
+            'name'  => 'John Doe',
         ]);
         $this->assertInternalType('string', $id);
     }
@@ -92,7 +92,7 @@ class QueryBuilderTest extends TestCase
     {
         DB::table('users')->insert([
             ['name' => 'Jane Doe'],
-            ['name' => 'John Doe']
+            ['name' => 'John Doe'],
         ]);
         $this->assertEquals(2, DB::table('users')->count());
     }
@@ -101,7 +101,7 @@ class QueryBuilderTest extends TestCase
     {
         DB::table('users')->insert([
             ['name' => 'Jane Doe', 'age' => 20],
-            ['name' => 'John Doe', 'age' => 21]
+            ['name' => 'John Doe', 'age' => 21],
         ]);
         DB::table('users')->where('name', 'John Doe')->update(['age' => 100]);
         $john = DB::table('users')->where('name', 'John Doe')->first();
@@ -114,7 +114,7 @@ class QueryBuilderTest extends TestCase
     {
         DB::table('users')->insert([
             ['name' => 'Jane Doe', 'age' => 20],
-            ['name' => 'John Doe', 'age' => 25]
+            ['name' => 'John Doe', 'age' => 25],
         ]);
         DB::table('users')->where('age', '<', 10)->delete();
         $this->assertEquals(2, DB::table('users')->count());
@@ -152,11 +152,11 @@ class QueryBuilderTest extends TestCase
     {
         DB::table('items')->insert([
             [
-                'tags' => ['tag1', 'tag2', 'tag3', 'tag4']
+                'tags' => ['tag1', 'tag2', 'tag3', 'tag4'],
             ],
             [
-                'tags' => ['tag2']
-            ]
+                'tags' => ['tag2'],
+            ],
         ]);
         $items = DB::table('items')->where('tags', 'contains', 'tag2')->get();
         $this->assertEquals(2, count($items));
@@ -167,9 +167,9 @@ class QueryBuilderTest extends TestCase
     public function testPush()
     {
         $id = DB::table('users')->insertGetId([
-            'name' => 'John Doe',
-            'tags' => array(),
-            'messages' => array(),
+            'name'      => 'John Doe',
+            'tags'      => [],
+            'messages'  => [],
         ]);
         DB::table('users')->where('id', $id)->push('tags', 'tag1');
         $user = DB::table('users')->find($id);
@@ -207,9 +207,9 @@ class QueryBuilderTest extends TestCase
         $message1 = ['from' => 'Jane', 'body' => 'Hi John'];
         $message2 = ['from' => 'Mark', 'body' => 'Hi John'];
         $id = DB::table('users')->insertGetId([
-            'name' => 'John Doe',
-            'tags' => ['tag1', 'tag2', 'tag3', 'tag4'],
-            'messages' => [$message1, $message2]
+            'name'      => 'John Doe',
+            'tags'      => ['tag1', 'tag2', 'tag3', 'tag4'],
+            'messages'  => [$message1, $message2],
         ]);
         DB::table('users')->where('id', $id)->pull('tags', 'tag3');
         $user = DB::table('users')->find($id);
@@ -228,12 +228,14 @@ class QueryBuilderTest extends TestCase
             ['name' => 'knife', 'type' => 'sharp'],
             ['name' => 'fork',  'type' => 'sharp'],
             ['name' => 'spoon', 'type' => 'round'],
-            ['name' => 'spoon', 'type' => 'round']
+            ['name' => 'spoon', 'type' => 'round'],
         ]);
-        $items = DB::table('items')->distinct('name')->get(); sort($items);
+        $items = DB::table('items')->distinct('name')->get();
+        sort($items);
         $this->assertEquals(3, count($items));
         $this->assertEquals(['fork', 'knife', 'spoon'], $items);
-        $types = DB::table('items')->distinct('type')->get(); sort($types);
+        $types = DB::table('items')->distinct('type')->get();
+        sort($types);
         $this->assertEquals(2, count($types));
         $this->assertEquals(['round', 'sharp'], $types);
     }
@@ -243,7 +245,7 @@ class QueryBuilderTest extends TestCase
         DB::table('items')->insert([
             ['id' => 'knife', 'type' => 'sharp', 'amount' => 34],
             ['id' => 'fork',  'type' => 'sharp', 'amount' => 20],
-            ['id' => 'spoon', 'type' => 'round', 'amount' => 3]
+            ['id' => 'spoon', 'type' => 'round', 'amount' => 3],
         ]);
         $item = DB::table('items')->find('knife');
         $this->assertEquals('knife', $item['id']);
@@ -251,7 +253,7 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals('fork', $item['id']);
         DB::table('users')->insert([
             ['id' => 1, 'name' => 'Jane Doe'],
-            ['id' => 2, 'name' => 'John Doe']
+            ['id' => 2, 'name' => 'John Doe'],
         ]);
         $item = DB::table('users')->find(1);
         $this->assertEquals(1, $item['id']);
@@ -263,7 +265,7 @@ class QueryBuilderTest extends TestCase
             ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
             ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
             ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
-            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14],
         ]);
         $items = DB::table('items')->orderBy('name')->take(2)->get();
         $this->assertEquals(2, count($items));
@@ -276,7 +278,7 @@ class QueryBuilderTest extends TestCase
             ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
             ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
             ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
-            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14],
         ]);
         $items = DB::table('items')->orderBy('name')->skip(2)->get();
         $this->assertEquals(2, count($items));
@@ -287,7 +289,7 @@ class QueryBuilderTest extends TestCase
     {
         DB::table('users')->insert([
             ['name' => 'Jane Doe', 'age' => 20],
-            ['name' => 'John Doe', 'age' => 25]
+            ['name' => 'John Doe', 'age' => 25],
         ]);
         $age = DB::table('users')->where('name', 'John Doe')->pluck('age');
         $this->assertEquals(25, $age);
@@ -299,7 +301,7 @@ class QueryBuilderTest extends TestCase
             ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
             ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
             ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
-            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14],
         ]);
         $list = DB::table('items')->lists('name');
         sort($list);
@@ -316,7 +318,7 @@ class QueryBuilderTest extends TestCase
             ['name' => 'knife', 'type' => 'sharp', 'amount' => 34],
             ['name' => 'fork',  'type' => 'sharp', 'amount' => 20],
             ['name' => 'spoon', 'type' => 'round', 'amount' => 3],
-            ['name' => 'spoon', 'type' => 'round', 'amount' => 14]
+            ['name' => 'spoon', 'type' => 'round', 'amount' => 14],
         ]);
         $this->assertEquals(71, DB::table('items')->sum('amount'));
         $this->assertEquals(4, DB::table('items')->count('amount'));
@@ -361,7 +363,7 @@ class QueryBuilderTest extends TestCase
         $this->assertTrue(isset($user1['note2']));
         $this->assertTrue(isset($user2['note1']));
         $this->assertTrue(isset($user2['note2']));
-        DB::table('users')->where('name', 'Jane Doe')->unset(array('note1', 'note2'));
+        DB::table('users')->where('name', 'Jane Doe')->unset(['note1', 'note2']);
         $user2 = DB::table('users')->find($id2);
         $this->assertFalse(isset($user2['note1']));
         $this->assertFalse(isset($user2['note2']));
@@ -413,23 +415,22 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(1, count($results));
         DB::table('users')->insert([
             [
-                'name' => 'John Doe',
+                'name'      => 'John Doe',
                 'addresses' => [
                     ['city' => 'Ghent'],
-                    ['city' => 'Paris']
-                ]
+                    ['city' => 'Paris'],
+                ],
             ],
             [
-                'name' => 'Jane Doe',
+                'name'      => 'Jane Doe',
                 'addresses' => [
                     ['city' => 'Brussels'],
-                    ['city' => 'Paris']
-                ]
-            ]
+                    ['city' => 'Paris'],
+                ],
+            ],
         ]);
         $users = DB::table('users')->where('addresses', 'contains', ['city' => 'Brussels'])->get();
         $this->assertEquals(1, count($users));
         $this->assertEquals('Jane Doe', $users[0]['name']);
     }
-
 }

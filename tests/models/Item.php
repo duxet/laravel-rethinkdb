@@ -2,8 +2,8 @@
 
 use \duxet\Rethinkdb\Eloquent\Model;
 
-class Item extends Model {
-
+class Item extends Model
+{
     protected $table = 'items';
     protected static $unguarded = true;
 
@@ -16,5 +16,4 @@ class Item extends Model {
     {
         return $query->where('type', 'sharp');
     }
-
 }

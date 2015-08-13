@@ -1,10 +1,12 @@
-<?php namespace duxet\Rethinkdb;
+<?php
 
-use \r;
+namespace duxet\Rethinkdb;
+
 use duxet\Rethinkdb\Query\Builder as QueryBuilder;
+use r;
 
-class Connection extends \Illuminate\Database\Connection {
-
+class Connection extends \Illuminate\Database\Connection
+{
     /**
      * The RethinkDB connection handler.
      *
@@ -15,7 +17,7 @@ class Connection extends \Illuminate\Database\Connection {
     /**
      * Create a new database connection instance.
      *
-     * @param  array $config
+     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -33,12 +35,14 @@ class Connection extends \Illuminate\Database\Connection {
     /**
      * Begin a fluent query against a database table.
      *
-     * @param  string  $table
+     * @param string $table
+     *
      * @return QueryBuilder
      */
     public function table($table)
     {
         $query = new QueryBuilder($this);
+
         return $query->from($table);
     }
 
@@ -55,7 +59,8 @@ class Connection extends \Illuminate\Database\Connection {
     /**
      * Get the elapsed time since a given starting point.
      *
-     * @param  int    $start
+     * @param int $start
+     *
      * @return float
      */
     public function getElapsedTime($start)
@@ -72,5 +77,4 @@ class Connection extends \Illuminate\Database\Connection {
     {
         return new Schema\Builder($this);
     }
-
 }

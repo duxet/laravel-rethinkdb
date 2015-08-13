@@ -2,8 +2,8 @@
 
 use \duxet\Rethinkdb\Eloquent\Model;
 
-class Client extends Model {
-
+class Client extends Model
+{
     protected $table = 'clients';
     protected static $unguarded = true;
 
@@ -19,5 +19,4 @@ class Client extends Model {
     {
         return $this->hasMany('Address', 'data.address_id', 'data.client_id');
     }
-
 }

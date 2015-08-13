@@ -1,7 +1,7 @@
 <?php
 
-class RelationsTest extends TestCase {
-
+class RelationsTest extends TestCase
+{
     public function tearDown()
     {
         Book::truncate();
@@ -136,5 +136,4 @@ class RelationsTest extends TestCase {
         $this->assertEquals('admin', $role->type);
         $this->assertEquals($user->id, $role->user_id);
     }
-
 }

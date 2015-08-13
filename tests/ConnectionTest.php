@@ -1,7 +1,7 @@
 <?php
 
-class ConnectionTest extends TestCase {
-
+class ConnectionTest extends TestCase
+{
     public function testConnection()
     {
         $connection = DB::connection('rethinkdb');
@@ -19,5 +19,4 @@ class ConnectionTest extends TestCase {
         $c2 = DB::connection('rethinkdb');
         $this->assertNotEquals(spl_object_hash($c1), spl_object_hash($c2));
     }
-
 }
