@@ -30,6 +30,12 @@ class Connection extends \Illuminate\Database\Connection
         // Create the connection
         $this->connection = r\connect($config['host'],
             $port, $this->database, $authKey);
+
+        // We need to initialize a query grammar and the query post processors,
+        // which are both very important parts of the database abstractions -
+        // so we initialize these to their default values when starting.
+        $this->useDefaultQueryGrammar();
+        $this->useDefaultPostProcessor();
     }
 
     /**

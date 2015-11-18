@@ -46,6 +46,8 @@ class Builder extends QueryBuilder
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
+        $this->grammar = $connection->getQueryGrammar();
+        $this->processor = $connection->getPostProcessor();
         $this->query = new Query($this->connection);
     }
 
@@ -103,6 +105,16 @@ class Builder extends QueryBuilder
         }
 
         return $results;
+    }
+
+    /**
+     * Run the query as a "select" statement against the connection.
+     *
+     * @return array
+     */
+    protected function runSelect()
+    {
+        return $this->getFresh();
     }
 
     /**
