@@ -37,7 +37,7 @@ class RethinkdbServiceProvider extends ServiceProvider
 
             $creator = new MigrationCreator($app['files']);
             $composer = $app['composer'];
-        
+
             return new MigrateMakeCommand($creator, $composer);
         });
 

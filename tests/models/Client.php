@@ -11,7 +11,7 @@ class Client extends Model
     {
         return $this->belongsToMany('User');
     }
-    
+
     public function photo()
     {
         return $this->morphOne('Photo', 'imageable');
