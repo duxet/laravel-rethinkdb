@@ -34,10 +34,10 @@ class RethinkdbServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('command.rethink-migrate.make', function ($app) {
-            
+
             $creator = new MigrationCreator($app['files']);
             $composer = $app['composer'];
-            
+        
             return new MigrateMakeCommand($creator, $composer);
         });
 

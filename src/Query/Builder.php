@@ -377,6 +377,7 @@ class Builder extends QueryBuilder
 
         return $result;
     }
+    
     /**
      * Retrieve the maximum value of a given column.
      *

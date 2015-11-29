@@ -18,7 +18,6 @@ class MigrateMakeCommand extends LaravelMigration
         {--table= : The table to migrate.}
         {--path= : The location where the migration file should be created.}';
 
-
     /**
      * Create a new migration install command instance.
      *
