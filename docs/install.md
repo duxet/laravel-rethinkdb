@@ -40,4 +40,4 @@ After you add it, you can just configure your enviroment file to be something li
 	DB_DATABASE=homestead
 	DB_CONNECTION=rethinkdb
 
-but you can always updatr your `DB_HOST` to point the IP where you have installed rethinkdb.
+but you can always updatr your `DB_HOST` to point to the IP where you have installed rethinkdb.

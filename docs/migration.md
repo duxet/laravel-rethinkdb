@@ -16,7 +16,7 @@ Usually laravel migration file is using
 
 but here you should repalce that with the package Schema Blueprint class like :
 
-`use duxet\t\Schema\Blueprint;`
+`use duxet\Rethinkdb\Schema\Blueprint;`
 
 ## Running the migrations
 
@@ -29,7 +29,7 @@ This is an example of how the laravel Users Migration file has become
 	<?php
 
 	// use Illuminate\Database\Schema\Blueprint;
-	use duxet\t\Schema\Blueprint;
+	use duxet\Rethinkdb\Schema\Blueprint;
 	use Illuminate\Database\Migrations\Migration;
 
 	class CreateUsersTable extends Migration
