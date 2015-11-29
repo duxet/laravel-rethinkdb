@@ -2,9 +2,6 @@
 
 namespace duxet\Rethinkdb\Migrations;
 
-use Closure;
-use Illuminate\Support\Str;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Database\Migrations\MigrationCreator as LaravelMigrationCreator;
 
 class MigrationCreator extends LaravelMigrationCreator
