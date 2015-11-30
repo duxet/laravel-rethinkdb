@@ -14,7 +14,7 @@ Usually laravel migration file is using
 
 `use Illuminate\Database\Schema\Blueprint`
 
-but here you should repalce that with the package Schema Blueprint class like :
+but here you should replace that with the package Schema Blueprint class like :
 
 `use duxet\Rethinkdb\Schema\Blueprint;`
 
