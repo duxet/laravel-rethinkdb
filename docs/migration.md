@@ -4,7 +4,7 @@
 
 You can easily create a migration file using the same commands which you have used in laravel like for example :
 
-`php artisan make:migrate Users --create`
+`php artisan make:migration Users --create`
 
 which will create a migration file for you to create the users table.
 
