@@ -154,7 +154,7 @@ class Builder extends QueryBuilder
         $this->compileWheres();
         $result = $this->query->insert($values);
 
-        return (0 == (int) $result['errors']);
+        return 0 == (int) $result['errors'];
     }
 
     /**
@@ -271,7 +271,7 @@ class Builder extends QueryBuilder
     {
         $result = $this->query->delete()->run();
 
-        return (0 == (int) $result['errors']);
+        return 0 == (int) $result['errors'];
     }
 
     /**
@@ -292,7 +292,7 @@ class Builder extends QueryBuilder
             $column => r\row($column)->{$operation}($value),
         ])->run();
 
-        return (0 == (int) $result['errors']);
+        return 0 == (int) $result['errors'];
     }
 
     /**
@@ -310,7 +310,7 @@ class Builder extends QueryBuilder
             $column => r\row($column)->difference([$value]),
         ])->run();
 
-        return (0 == (int) $result['errors']);
+        return 0 == (int) $result['errors'];
     }
 
     /**
@@ -429,7 +429,7 @@ class Builder extends QueryBuilder
             return $doc->without($columns);
         })->run();
 
-        return (0 == (int) $result['errors']);
+        return 0 == (int) $result['errors'];
     }
 
     /**
