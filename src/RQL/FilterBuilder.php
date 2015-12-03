@@ -27,8 +27,7 @@ class FilterBuilder
             // Wrap the where with an $or operator.
             if ($where['boolean'] == 'or') {
                 $chain = $chain->rOr($filter);
-            }
-            // If there is more wheres, then wrap existing filters with and
+            } // If there are more wheres, then wrap existing filters with and
             elseif ($chain && count($wheres) > 1) {
                 $chain = $chain->rAnd($filter);
             }

@@ -2,7 +2,9 @@
 
 namespace duxet\Rethinkdb;
 
+use duxet\Rethinkdb\Console\Migrations\MigrateMakeCommand;
 use duxet\Rethinkdb\Eloquent\Model;
+use duxet\Rethinkdb\Migrations\MigrationCreator;
 use Illuminate\Support\ServiceProvider;
 
 class RethinkdbServiceProvider extends ServiceProvider
@@ -30,5 +32,20 @@ class RethinkdbServiceProvider extends ServiceProvider
                 return new Connection($config);
             });
         });
+
+        $this->app->singleton('command.rethink-migrate.make', function ($app) {
+
+            $creator = new MigrationCreator($app['files']);
+            $composer = $app['composer'];
+
+            return new MigrateMakeCommand($creator, $composer);
+        });
+
+        $this->commands('command.rethink-migrate.make');
+    }
+
+    public function provides()
+    {
+        return ['command.rethink-migrate.make'];
     }
 }
