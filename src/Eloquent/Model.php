@@ -2,7 +2,6 @@
 
 namespace duxet\Rethinkdb\Eloquent;
 
-use Carbon\Carbon;
 use DateTime;
 use duxet\Rethinkdb\Eloquent\Relations\BelongsTo;
 use duxet\Rethinkdb\Query\Builder as QueryBuilder;
@@ -32,7 +31,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Ensure Timestamps are returned in DateTime
+     * Ensure Timestamps are returned in DateTime.
      *
      * @param DateTime $value
      *
@@ -47,7 +46,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Retain DateTime format for storage
+     * Retain DateTime format for storage.
      *
      * @param  \DateTime  $value
      * @return string
