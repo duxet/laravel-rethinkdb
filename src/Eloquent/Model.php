@@ -33,7 +33,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Ensure Timestamps are returned in DateTime.
      *
-     * @param DateTime $value
+     * @param \DateTime $value
      *
      * @return \DateTime
      */
@@ -48,7 +48,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Retain DateTime format for storage.
      *
-     * @param  \DateTime  $value
+     * @param \DateTime $value
      * @return string
      */
     public function fromDateTime($value)
