@@ -49,6 +49,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * Retain DateTime format for storage.
      *
      * @param \DateTime $value
+     *
      * @return string
      */
     public function fromDateTime($value)
