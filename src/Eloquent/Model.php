@@ -42,6 +42,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         if ($value instanceof DateTime) {
             return $value;
         }
+
         return new DateTime($value);
     }
 
