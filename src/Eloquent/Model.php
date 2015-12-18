@@ -32,15 +32,39 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Return DateTime object as Carbon instance.
+     * Ensure Timestamps are returned in DateTime
      *
      * @param DateTime $value
      *
-     * @return \Carbon\Carbon
+     * @return \DateTime
      */
     protected function asDateTime($value)
     {
-        return Carbon::instance($value);
+        if ($value instanceof DateTime) {
+            return $value;
+        }
+        return new DateTime($value);
+    }
+
+    /**
+     * Retain DateTime format for storage
+     *
+     * @param  \DateTime  $value
+     * @return string
+     */
+    public function fromDateTime($value)
+    {
+        return $this->asDateTime($value);
+    }
+
+    /**
+     * Get a fresh timestamp for the model.
+     *
+     * @return \DateTime
+     */
+    public function freshTimestamp()
+    {
+        return new DateTime();
     }
 
     /**
