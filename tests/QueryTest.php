@@ -218,4 +218,15 @@ class QueryTest extends TestCase
             })->get();
         $this->assertEquals(2, count($users));
     }
+
+    public function testCreatedAt()
+    {
+        $users = User::orderBy('created_at', 'desc')->take(10)->get();
+        $prev_date = new \DateTime();
+        foreach ($users as $user) {
+            $this->assertEquals('DateTime', get_class($user->created_at));
+            $this->assertLessThanOrEqual($prev_date, $user->created_at);
+            $prev_date = $user->created_at;
+        }
+    }
 }
