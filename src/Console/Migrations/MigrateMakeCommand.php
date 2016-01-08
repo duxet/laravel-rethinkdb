@@ -22,7 +22,7 @@ class MigrateMakeCommand extends LaravelMigration
      * Create a new migration install command instance.
      *
      * @param duxet\Rethinkdb\Migrations\MigrationCreator $creator
-     * @param \Illuminate\Support\Composer             $composer
+     * @param \Illuminate\Support\Composer                $composer
      *
      * @return void
      */
