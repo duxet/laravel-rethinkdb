@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use \duxet\Rethinkdb\Eloquent\Model;
+
+class DummyClass extends Model
+{
+    //
+}
