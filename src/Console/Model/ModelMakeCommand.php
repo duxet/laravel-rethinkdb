@@ -2,7 +2,7 @@
 
 namespace duxet\Rethinkdb\Console\Model;
 
-use Illuminate\Foundation\Console\ModelMakeCommand as LaravelMakeModelCommand
+use Illuminate\Foundation\Console\ModelMakeCommand as LaravelMakeModelCommand;
 
 class ModelMakeCommand extends LaravelMakeModelCommand
 {
