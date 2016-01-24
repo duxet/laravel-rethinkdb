@@ -45,8 +45,8 @@ class RethinkdbServiceProvider extends ServiceProvider
         $this->commands('command.rethink-migrate.make');
 
 
-        $this->app->singleton('command.rethink-model.make', function () {
-            return new ModelMakeCommand();
+        $this->app->singleton('command.rethink-model.make', function ($app) {
+            return new ModelMakeCommand($app['files']);
         });
 
         $this->commands('command.rethink-model.make');
