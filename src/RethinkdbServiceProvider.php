@@ -46,7 +46,7 @@ class RethinkdbServiceProvider extends ServiceProvider
 
 
         $this->app->singleton('command.rethink-model.make', function () {
-            return new ModelMakeCommand();
+            return new duxet\Rethinkdb\Console\Model\ModelMakeCommand();
         });
 
         $this->commands('command.rethink-model.make');
