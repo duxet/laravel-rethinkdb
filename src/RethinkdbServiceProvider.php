@@ -3,9 +3,9 @@
 namespace duxet\Rethinkdb;
 
 use duxet\Rethinkdb\Console\Migrations\MigrateMakeCommand;
+use duxet\Rethinkdb\Console\Model\ModelMakeCommand;
 use duxet\Rethinkdb\Eloquent\Model;
 use duxet\Rethinkdb\Migrations\MigrationCreator;
-use duxet\Rethinkdb\Console\Model\ModelMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 class RethinkdbServiceProvider extends ServiceProvider
