@@ -4,7 +4,7 @@
 
 1. Rethinkdb : You need to make sure that you have installed [rethinkdb](http://www.rethinkdb.com) successfully, you can reffer to rethinkdb [documentation](https://rethinkdb.com/docs/) for the full instruction of how to install rethinkdb.
 
-1. Laravel 5.1 : this package was designed to work with [laravel](http://laravel.com) 5.1, so it will not work with laravel 4.x.
+1. Laravel 5.2 : this package was designed to work with [laravel](http://laravel.com) 5.2, so it will not work with laravel 4.x.
 
 ## Installation
 

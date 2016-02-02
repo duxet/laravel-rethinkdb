@@ -3,6 +3,7 @@
 namespace duxet\Rethinkdb;
 
 use duxet\Rethinkdb\Console\Migrations\MigrateMakeCommand;
+use duxet\Rethinkdb\Console\Model\ModelMakeCommand;
 use duxet\Rethinkdb\Eloquent\Model;
 use duxet\Rethinkdb\Migrations\MigrationCreator;
 use Illuminate\Support\ServiceProvider;
@@ -42,10 +43,16 @@ class RethinkdbServiceProvider extends ServiceProvider
         });
 
         $this->commands('command.rethink-migrate.make');
+
+        $this->app->singleton('command.rethink-model.make', function ($app) {
+            return new ModelMakeCommand($app['files']);
+        });
+
+        $this->commands('command.rethink-model.make');
     }
 
     public function provides()
     {
-        return ['command.rethink-migrate.make'];
+        return ['command.rethink-migrate.make', 'command.rethink-model.make'];
     }
 }

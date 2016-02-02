@@ -1,6 +1,6 @@
 # Migration
 
-## Create a migration file
+## Create a Migration File
 
 You can easily create a migration file using the following command which will create a migration file for you to create the users table and use the package schema instead of Laravel schema:
 
@@ -9,7 +9,7 @@ You can easily create a migration file using the following command which will cr
 Please note that you can use the same options that you use in `make:migration` with `make:rethink-migration`, as its based on laravel `make:migration`
 
 
-## Running the migrations
+## Running The Migrations
 
 Nothing will change here, you will keep using the same laravel commands which you are used to execute to run the migration.
 
