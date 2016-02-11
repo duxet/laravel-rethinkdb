@@ -123,6 +123,29 @@ You can easily create a model class using the following command which will creat
 
 Please note that you can use the same options that you use in `make:model` with `make:rethink-model`, as its based on laravel `make:model`
 
+Be aware that any model classes that Laravel generates itself will need to be updated manually, otherwise seeding will not work properly.  For example, the User model extends `Illuminate\Foundation\Auth\User`, which extends `Illuminate\Database\Eloquent\Model` and further implements several interfaces and associated traits that if their functionality is required will need to be added to the User model.  For example, it your User model might look like this:
+
+```
+use Illuminate\Auth\Authenticatable;
+use \duxet\Rethinkdb\Eloquent\Model;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+
+class User extends Model implements
+    AuthenticatableContract,
+    AuthorizableContract,
+    CanResetPasswordContract
+{
+    use Authenticatable, Authorizable, CanResetPassword;
+    
+    //
+}
+```
+
+
 ## Example of Laravel News Model Class
 
 This is an example of how the laravel model class has become
