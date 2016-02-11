@@ -142,7 +142,7 @@ This is an example of how the laravel model class has become
 
 Be aware that any model that Laravel generates during its initial installation will need to be updated manually in order for them to work properly.  For example, the User model extends `Illuminate\Foundation\Auth\User`, which further extends `Illuminate\Database\Eloquent\Model` instead of `\duxet\Rethinkdb\Eloquent\Model;`. The import `Illuminate\Foundation\Auth\User` needs to be removed from the User model and replaced with `\duxet\Rethinkdb\Eloquent\Model;`, and any interfaces and associated traits implemented in `Illuminate\Foundation\Auth\User` that are required will need to be ported to the User model.
 
-## Example of Updating Laravel User Model Class
+## Example of Laravel User Model Class
 
 This is an example of how the laravel User model class has become
 
