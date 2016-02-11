@@ -123,7 +123,24 @@ You can easily create a model class using the following command which will creat
 
 Please note that you can use the same options that you use in `make:model` with `make:rethink-model`, as its based on laravel `make:model`
 
-Be aware that any model classes that Laravel generates itself will need to be updated manually, otherwise seeding will not work properly.  For example, the User model extends `Illuminate\Foundation\Auth\User`, which extends `Illuminate\Database\Eloquent\Model` and further implements several interfaces and associated traits that if their functionality is required will need to be added to the User model.  For example, it your User model might look like this:
+## Example of Laravel News Model Class
+
+This is an example of how the laravel model class has become
+
+	<?php
+
+	namespace App;
+
+	use \duxet\Rethinkdb\Eloquent\Model;
+
+	class News extends Model
+	{
+	    //
+	}
+
+## Example of Updating Laravel User Model Class
+
+Be aware that any model that Laravel generates during its initial installation will need to be updated manually in order for them to work properly.  For example, the User model extends `Illuminate\Foundation\Auth\User`, which further extends `Illuminate\Database\Eloquent\Model` instead of `\duxet\Rethinkdb\Eloquent\Model;`. The import `Illuminate\Foundation\Auth\User` needs to be removed from the User model and replaced with `\duxet\Rethinkdb\Eloquent\Model;`, and any interfaces and associated traits implemented in `Illuminate\Foundation\Auth\User` that are required will need to be ported to the User model.
 
 ```
 use Illuminate\Auth\Authenticatable;
@@ -144,20 +161,3 @@ class User extends Model implements
     //
 }
 ```
-
-
-## Example of Laravel News Model Class
-
-This is an example of how the laravel model class has become
-
-	<?php
-
-	namespace App;
-
-	use \duxet\Rethinkdb\Eloquent\Model;
-
-	class News extends Model
-	{
-	    //
-	}
-
