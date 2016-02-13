@@ -68,6 +68,8 @@ You can easily create a migration file using the following command which will cr
 
 Please note that you can use the same options that you use in `make:migration` with `make:rethink-migration`, as its based on laravel `make:migration`
 
+Be aware that Laravel Schema API is not fully implemented.  For example, ID columns using increments will not be auto-incremented unsigned integers, and will instead be a UUID unless explicitly set.  The easiest solution is to maintain UUID use within RethinkDB, turn off incremental IDs in Laravel, and finally implement UUID use in Laravel.
+
 
 ## Running The Migrations
 
