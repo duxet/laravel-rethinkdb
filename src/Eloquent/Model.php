@@ -11,6 +11,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Model extends \Illuminate\Database\Eloquent\Model
 {
     /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var
+     */
+    public $incrementing = false;
+    
+    /**
      * Get the format for database stored dates.
      *
      * @return string

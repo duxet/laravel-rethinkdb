@@ -68,8 +68,7 @@ You can easily create a migration file using the following command which will cr
 
 Please note that you can use the same options that you use in `make:migration` with `make:rethink-migration`, as its based on laravel `make:migration`
 
-Be aware that Laravel Schema API is not fully implemented.  For example, ID columns using increments will not be auto-incremented unsigned integers, and will instead be a UUID unless explicitly set.  The easiest solution is to maintain UUID use within RethinkDB, turn off incremental IDs in Laravel, and finally implement UUID use in Laravel.
-
+RethinkDB doesn't support auto-incrementing IDs, and instead uses a standards-compliant implementation of UUID (universally unique identifier), making implementing UUIDs unnecessary within Laravel, even if used outside the auto-generated UUID for ID columns by using the [ReQL API](https://www.rethinkdb.com/api/javascript/uuid/). Incrementing has been turned off in `duxet\Rethinkdb\Eloquent\Model` to support the use of UUIDs, and instead of using `$table->increments('id');` for primary keys in your migrations you can use `$table->uuid('id');`.
 
 ## Running The Migrations
 
@@ -94,7 +93,7 @@ This is an example of how the laravel Users Migration file has become
 	    public function up()
 	    {
 	        Schema::create('users', function (Blueprint $table) {
-	            $table->increments('id');
+	            $table->uuid('id');
 	            $table->string('name');
 	            $table->string('email')->unique();
 	            $table->string('password', 60);
