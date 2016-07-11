@@ -2,7 +2,7 @@
 
 namespace duxet\Rethinkdb\Console\Model;
 
-use Illuminate\Foundation\Console\ModelMakeCommand as LaravelMakeModelCommand;
+use Illuminate\Console\GeneratorCommand as LaravelMakeModelCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 class ModelMakeCommand extends LaravelMakeModelCommand
