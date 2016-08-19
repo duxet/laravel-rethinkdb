@@ -66,6 +66,21 @@ class Query
         $time = $this->connection->getElapsedTime($start);
         $this->connection->logQuery($query, [], $time);
 
-        return $result;
+        return $this->nativeArray($result);
+    }
+
+    private function nativeArray($val)
+    {
+        if (is_array($val)) {
+            foreach ($val as $k => $v) {
+                $val[$k] = $this->nativeArray($v);
+            }
+
+            return $val;
+        } elseif (is_object($val) && $val instanceof \ArrayObject) {
+            return $val->getArrayCopy();
+        } else {
+            return $val;
+        }
     }
 }
