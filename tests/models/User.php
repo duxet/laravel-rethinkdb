@@ -6,6 +6,7 @@ class User extends Model
 {
     protected $dates = ['birthday', 'entry.date'];
     protected static $unguarded = true;
+    protected $dateFormat = 'l jS \of F Y h:i:s A';
 
     public function books()
     {

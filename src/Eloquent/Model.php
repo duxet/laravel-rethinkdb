@@ -2,6 +2,7 @@
 
 namespace duxet\Rethinkdb\Eloquent;
 
+use Carbon\Carbon;
 use DateTime;
 use duxet\Rethinkdb\Eloquent\Relations\BelongsTo;
 use duxet\Rethinkdb\Query\Builder as QueryBuilder;
@@ -17,7 +18,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     protected function getDateFormat()
     {
-        return 'Y-m-d H:i:s';
+        return $this->dateFormat ?: 'Y-m-d H:i:s';
     }
 
     /**
@@ -39,11 +40,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     protected function asDateTime($value)
     {
-        if ($value instanceof DateTime) {
-            return $value;
+        // Legacy support for Laravel 5.0
+        if (!$value instanceof Carbon) {
+            return Carbon::instance($value);
         }
 
-        return new DateTime($value);
+        return parent::asDateTime($value);
     }
 
     /**
@@ -55,17 +57,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public function fromDateTime($value)
     {
-        return $this->asDateTime($value);
-    }
+        if ($value instanceof DateTime) {
+            return $value;
+        }
 
-    /**
-     * Get a fresh timestamp for the model.
-     *
-     * @return \DateTime
-     */
-    public function freshTimestamp()
-    {
-        return new DateTime();
+        return parent::asDateTime($value);
     }
 
     /**
@@ -165,5 +161,27 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $localKey = $localKey ?: $this->getKeyName();
 
         return new HasMany($instance->newQuery(), $this, $foreignKey, $localKey);
+    }
+
+    /**
+     * Determine if the new and old values for a given key are numerically equivalent.
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    protected function originalIsNumericallyEquivalent($key)
+    {
+        $current = $this->attributes[$key];
+        $original = $this->original[$key];
+        // Date comparison.
+        if (in_array($key, $this->getDates())) {
+            $current = $current instanceof DateTime ? $this->asDateTime($current) : $current;
+            $original = $original instanceof DateTime ? $this->asDateTime($original) : $original;
+
+            return $current == $original;
+        }
+
+        return parent::originalIsNumericallyEquivalent($key);
     }
 }
