@@ -11,7 +11,7 @@
         "psr-4": { "duxet\\Rethinkdb\\": "src/" }
     },
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=5.6.0",
         "illuminate/container": ">=5.0.0",
         "illuminate/contracts": ">=5.0.0",
         "illuminate/database": ">=5.0.0",
