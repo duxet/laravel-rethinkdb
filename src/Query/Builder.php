@@ -29,7 +29,7 @@ class Builder extends QueryBuilder
      *
      * @var array
      */
-    protected $operators = [
+    public $operators = [
         '=', '<', '>', '<=', '>=', '<>', '!=',
         'like', 'not like', 'between', 'ilike',
         '&', '|', '^', '<<', '>>',
@@ -439,7 +439,7 @@ class Builder extends QueryBuilder
      *
      * @return $this
      */
-    public function groupBy()
+    public function groupBy(...$groups)
     {
         foreach (func_get_args() as $arg) {
             $this->query->group($arg)->ungroup()->map(function ($doc) {

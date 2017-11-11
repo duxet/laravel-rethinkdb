@@ -3,6 +3,7 @@
 namespace duxet\Rethinkdb;
 
 use duxet\Rethinkdb\Query\Builder as QueryBuilder;
+use duxet\Rethinkdb\Schema\Grammar;
 use r;
 
 class Connection extends \Illuminate\Database\Connection
@@ -35,6 +36,7 @@ class Connection extends \Illuminate\Database\Connection
         // so we initialize these to their default values when starting.
         $this->useDefaultQueryGrammar();
         $this->useDefaultPostProcessor();
+        $this->schemaGrammar = new Grammar();
     }
 
     /**
