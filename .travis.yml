@@ -1,9 +1,9 @@
 language: php
 
 php:
-  - 5.6
   - 7.0
   - 7.1
+  - 7.2
 
 before_install:
   - source /etc/lsb-release && echo "deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list
