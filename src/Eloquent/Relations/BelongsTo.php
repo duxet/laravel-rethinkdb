@@ -4,6 +4,7 @@ namespace duxet\Rethinkdb\Eloquent\Relations;
 
 class BelongsTo extends \Illuminate\Database\Eloquent\Relations\BelongsTo
 {
+    protected $otherKey = 'id';
     /**
      * Set the base constraints on the relation query.
      *
