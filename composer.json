@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "psr/log": "1.0.0",
-        "orchestra/testbench": "3.0.*",
+        "orchestra/testbench": "3.7.*",
         "codeclimate/php-test-reporter": "0.1.*@dev",
         "mockery/mockery": "0.9.*@dev",
         "phpunit/phpunit": "~4.0"
