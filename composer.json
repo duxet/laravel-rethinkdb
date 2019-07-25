@@ -25,5 +25,12 @@
         "mockery/mockery": "0.9.*@dev",
         "phpunit/phpunit": "~4.0"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "duxet\\Rethinkdb\\RethinkdbServiceProvider"
+            ]
+        }
+    }
 }
