@@ -12,6 +12,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Model extends \Illuminate\Database\Eloquent\Model
 {
     /**
+     * The "type" of the auto-incrementing ID.
+     * Setting to 'string' prevents Laravel from casting non-integer IDs
+     * to numeric ones. Very helpful with inverted relations.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
+    
+    /**
      * Get the format for database stored dates.
      *
      * @return string
